@@ -94,6 +94,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .rl{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.06em;padding:1px 7px;border-radius:5px}
 .rl.d{background:var(--def-soft);color:var(--def)}.rl.a{background:var(--att-soft);color:var(--att)}
 .warnl{font-size:13px;color:var(--bad);line-height:1.4}
+.planlbl{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
 .planselect{height:42px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:600;padding:0 10px;width:100%}
 .tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .tl li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:8px 6px;border-top:1px solid var(--line);align-items:start}
@@ -253,10 +254,9 @@ table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeri
 <div class="sheet-bg" id="planBg" hidden>
   <div class="sheet" role="dialog" aria-label="Plan de rotación">
     <h3>Plan de rotación</h3>
-    <label class="note" for="planSel">Escenario del partido (al elegirlo se marca quién viene en Plantilla)</label>
-    <select id="planSel" class="planselect"></select>
+    <p class="planlbl" id="planLbl"></p>
     <div id="planBody"></div>
-    <p class="note">Criterio: siempre uno de Ruben, Joan o Roger en defensa (Bernat solo si faltan) y uno de Bernat, Ignasi o Pau J. en ataque; nunca dos de los más flojos en la misma línea. Respeta el cardio ideal y máximo de cada uno. Es una guía: los cambios los haces tú.</p>
+    <p class="note">Criterio: siempre uno de Ruben, Joan o Roger en defensa (Bernat solo si faltan) y uno de Bernat, Ignasi o Pau J. en ataque; nunca dos de los más flojos en la misma línea. Respeta el cardio ideal y máximo de cada uno. Es una guía: los cambios los haces tú. Para cambiar quién viene o su cardio, ve a Plantilla y el plan se recalcula solo.</p>
     <div class="foot"><span></span><button class="btn main" id="planDone">Cerrar</button></div>
   </div>
 </div>
@@ -364,7 +364,7 @@ function suggest(){
     const line=ROLES[o.s],partner=vc[o.s%2===1?o.s+1:o.s-1];
     let best=null;
     for(const c of fieldPresent()){
-      if(vc.includes(c.id)||used.has(c.id))continue;
+      if(S.court.includes(c.id)||vc.includes(c.id)||used.has(c.id))continue; // nunca propone que entre alguien que ya está en pista
       const pen=info(c)[line];if(pen>=3)continue;
       const rest=restMs(c)/60000,def=deficitMin(c),ok=lineOk(line,[partner,c.id]);
       if(rest<(ok?1.5:2))continue;
@@ -398,18 +398,124 @@ function autoLineup(){
 }
 
 /* ---------- Plan por escenario ---------- */
-function scenarioKey(){
-  const abs=FIELD.filter(k=>!S.players.some(p=>p.key===k&&p.present)).sort();
-  return Object.keys(PLANS).find(k=>{const a=PLANS[k].absent.slice().sort();return a.length===abs.length&&a.every((x,i)=>x===abs[i])})||null;
+/* Planificador que corre en el móvil: busca la mejor rotación de 10 bloques de 5'
+   para cualquier convocatoria, con las mismas reglas que los 13 escenarios. */
+function buildPlan(players, opt) {
+  // players: [{k, key, t, pD, pA, ib, mb}]  ib/mb = bloques seguidos ideal / máximo
+  opt = opt || {};
+  const NB = 10, n = players.length, W = opt.beam || 160;
+  if (n < 4) return null;
+  const start = opt.start || 0;
+  const tgt = 40 / n;
+  const AD = ['Ruben', 'Joan', 'Roger', 'Bernat'], AA = ['Bernat', 'Ignasi', 'Pau J.'];
+  const anD = players.map(p => AD.includes(p.key)), anA = players.map(p => AA.includes(p.key));
+  const weak = players.map(p => p.t === 3);
+  const mk = (line) => {
+    const pen = line === 'D' ? players.map(p => p.pD) : players.map(p => p.pA);
+    const an = line === 'D' ? anD : anA, r = [];
+    for (let a = 0; a < n; a++) if (pen[a] < 3) for (let b = a + 1; b < n; b++) if (pen[b] < 3)
+      r.push({ a, b, c: 2 * (pen[a] + pen[b]) + (an[a] || an[b] ? 0 : 100) + (weak[a] && weak[b] ? 100 : 0) });
+    return r;
+  };
+  const PD = mk('D'), PA = mk('A');
+  let beam = [{
+    cost: 0,
+    counts: opt.counts ? opt.counts.slice() : new Array(n).fill(0),
+    consec: opt.consec ? opt.consec.slice() : new Array(n).fill(0),
+    prevD: opt.prevD || [], prevA: opt.prevA || [], hist: []
+  }];
+  for (let blk = start; blk < NB; blk++) {
+    const cand = [];
+    const pace = tgt * (blk + 1) / NB;
+    for (let si = 0; si < beam.length; si++) {
+      const st = beam[si];
+      // coste de no sacar a quien va retrasado (se calcula por jugador una vez)
+      for (const d of PD) for (const a of PA) {
+        if (a.a === d.a || a.a === d.b || a.b === d.a || a.b === d.b) continue;
+        let cost = st.cost + d.c + a.c;
+        const on = [d.a, d.b, a.a, a.b];
+        for (const i of on) {
+          const c = st.consec[i] + 1, p = players[i];
+          if (c > p.mb) cost += 300;
+          else if (c > p.ib) cost += 6;
+          const nc = st.counts[i] + 1;
+          if (nc > Math.ceil(tgt) + 0.001) cost += 30; else if (nc > tgt + 0.001) cost += 6;
+        }
+        for (let i = 0; i < n; i++) if (i !== d.a && i !== d.b && i !== a.a && i !== a.b && st.counts[i] < pace - 1) cost += 4;
+        // cambios: quien entra o cambia de línea
+        let ch = 0;
+        if (st.prevD.length) {
+          if (!st.prevD.includes(d.a)) ch++; if (!st.prevD.includes(d.b)) ch++;
+          if (!st.prevA.includes(a.a)) ch++; if (!st.prevA.includes(a.b)) ch++;
+        }
+        cost += 0.5 * ch;
+        cand.push({ cost, si, d, a });
+      }
+    }
+    cand.sort((x, y) => x.cost - y.cost);
+    const seen = new Set(), nb = [];
+    for (const c of cand) {
+      if (nb.length >= W) break;
+      const st = beam[c.si];
+      const on = new Set([c.d.a, c.d.b, c.a.a, c.a.b]);
+      const counts = st.counts.map((v, i) => v + (on.has(i) ? 1 : 0));
+      const consec = st.consec.map((v, i) => (on.has(i) ? v + 1 : 0));
+      const sig = counts.join() + '|' + consec.join() + '|' + [c.d.a, c.d.b].sort().join() + '|' + [c.a.a, c.a.b].sort().join();
+      if (seen.has(sig)) continue; seen.add(sig);
+      nb.push({ cost: c.cost, counts, consec, prevD: [c.d.a, c.d.b], prevA: [c.a.a, c.a.b], hist: st.hist.concat([{ D: [c.d.a, c.d.b], A: [c.a.a, c.a.b] }]) });
+    }
+    beam = nb;
+  }
+  for (const st of beam) for (let i = 0; i < n; i++) {
+    const dev = Math.abs(st.counts[i] - tgt);
+    st.cost += 10 * dev + 25 * Math.max(0, dev - 1);
+  }
+  beam.sort((x, y) => x.cost - y.cost);
+  const best = beam[0];
+  return best.hist.map(b => ({ D: b.D.map(i => players[i].k), A: b.A.map(i => players[i].k) }));
 }
-const idByKey=k=>{const p=S.players.find(p=>p.key===k&&p.present);return p?p.id:null};
+
+function presenceSig(){return S.players.filter(p=>p.present&&!p.gk).map(p=>p.key||p.id).sort().join('|')}
+function fixedKey(){
+  if(S.players.some(p=>p.present&&!p.gk&&!p.key))return null;
+  const abs=FIELD.filter(k=>!S.players.some(p=>p.key===k&&p.present)).sort();
+  return Object.keys(PLANS).filter(k=>k!=='auto').find(k=>{const a=PLANS[k].absent.slice().sort();return a.length===abs.length&&a.every((x,i)=>x===abs[i])})||null;
+}
+function makeAuto(sig,started){
+  const ps=S.players.filter(p=>p.present&&!p.gk);
+  const arr=ps.map(p=>{const i=info(p);return {k:p.key||p.id,key:p.key,t:i.t,pD:i.D,pA:i.A,ib:Math.max(1,Math.floor(p.cardio/5)),mb:Math.max(1,Math.floor(p.cmax/5))}});
+  const opt={},cur=Math.min(9,Math.floor(matchMs()/BLOCK)),prefix=[];
+  if(started){
+    const idx=id=>ps.findIndex(p=>p.id===id);
+    opt.start=cur;
+    opt.counts=ps.map(p=>Math.floor(pMs(p)/BLOCK));
+    opt.consec=ps.map(p=>slotOf(p.id)>0?Math.floor(pStint(p)/BLOCK):0);
+    opt.prevD=[S.court[1],S.court[2]].map(idx).filter(i=>i>=0);
+    opt.prevA=[S.court[3],S.court[4]].map(idx).filter(i=>i>=0);
+    const old=(S.autoPlan&&S.autoPlan.blocks)||(S.lastFixed&&PLANS[S.lastFixed]?PLANS[S.lastFixed].blocks:null);
+    for(let b=0;b<cur;b++)prefix.push(old&&old[b]?old[b]:{D:[],A:[]});
+  }
+  let blocks=null;try{blocks=buildPlan(arr,opt)}catch(e){blocks=null}
+  S.autoPlan={sig,label:started?`Recalculado (${ps.length} jugadores)`:`Automático (${ps.length} jugadores)`,absent:FIELD.filter(k=>!S.players.some(p=>p.key===k&&p.present)),blocks:blocks?prefix.concat(blocks):null};
+  save();
+}
+function scenarioKey(){
+  const sig=presenceSig(),started=matchMs()>0||running();
+  if(!started||!S.startSig)S.startSig=sig;
+  const fk=fixedKey();
+  if(fk&&S.startSig===sig){S.lastFixed=fk;return fk}
+  if(!S.autoPlan||S.autoPlan.sig!==sig)makeAuto(sig,started);
+  if(S.autoPlan&&S.autoPlan.blocks){PLANS.auto=S.autoPlan;return 'auto'}
+  return null;
+}
+const idByKey=k=>{const p=S.players.find(p=>(p.key===k||p.id===k)&&p.present);return p?p.id:null};
 function planDiff(key,i){
   const b=PLANS[key].blocks[i];
-  const keyOf=id=>{const p=id&&P(id);return p?(p.key||p.name):null};
+  const keyOf=id=>{const p=id&&P(id);return p?(p.key||p.id):null};
   const cur={D:[S.court[1],S.court[2]].map(keyOf).filter(Boolean),A:[S.court[3],S.court[4]].map(keyOf).filter(Boolean)};
   const r={i,b,D:{out:cur.D.filter(k=>!b.D.includes(k)),inn:b.D.filter(k=>!cur.D.includes(k))},A:{out:cur.A.filter(k=>!b.A.includes(k)),inn:b.A.filter(k=>!cur.A.includes(k))}};
   const want=new Set([...b.D,...b.A]);
-  r.outs=S.court.slice(1).filter(id=>id&&!want.has(P(id).key));
+  r.outs=S.court.slice(1).filter(id=>id&&!want.has(P(id).key||id));
   r.ins=[...b.D,...b.A].map(idByKey).filter(id=>id&&!S.court.includes(id));
   r.empty=!r.D.out.length&&!r.D.inn.length&&!r.A.out.length&&!r.A.inn.length;
   return r;
@@ -484,7 +590,7 @@ function benchRow(p){
     <span class="mid"><span class="nm">${esc(p.name)}${sIn?'<span class="tag">Entra</span>':''}</span><span class="sub" data-k="bs"></span></span>
     <span class="tot" data-k="t"></span></button></li>`;
 }
-const nm=k=>esc(k);
+const nm=k=>{const p=S.players.find(p=>p.key===k||p.id===k);return esc(p?p.name:k)};
 function lineTxt(role,cls,x){
   if(!x.out.length&&!x.inn.length)return '';
   return `<div class="ln"><span class="rl ${cls}">${role}</span>${x.out.length?`<span>sale <b class="o">${x.out.map(nm).join(', ')}</b></span>`:''}${x.inn.length?`<span>entra <b class="i">${x.inn.map(nm).join(', ')}</b></span>`:''}</div>`;
@@ -605,7 +711,7 @@ $('reset').onclick=()=>{
   if(now()-resetArm>3000){resetArm=now();$('reset').textContent='¿Seguro?';setTimeout(()=>{$('reset').textContent='Reiniciar'},3000);return}
   if(running())pause();
   S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null});
-  S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];sel=null;alerted.clear();autoLineup();
+  S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];S.autoPlan=null;S.startSig=null;sel=null;alerted.clear();autoLineup();
   $('reset').textContent='Reiniciar';save();render();
 };
 
@@ -647,7 +753,8 @@ function planBodyHTML(key){
   const pl=PLANS[key],bl=pl.blocks,active=key===scenarioKey(),cur=active?Math.min(9,Math.floor(matchMs()/BLOCK)):-1;
   const items=bl.map((b,i)=>{
     let body;
-    if(i===0)body=`<div class="ln"><span class="rl d">DEF</span><span>${b.D.map(nm).join(', ')}</span></div><div class="ln"><span class="rl a">ATA</span><span>${b.A.map(nm).join(', ')}</span></div>`;
+    if(!b.D.length)body='<div class="quiet">—</div>';
+    else if(i===0||!bl[i-1].D.length)body=`<div class="ln"><span class="rl d">DEF</span><span>${b.D.map(nm).join(', ')}</span></div><div class="ln"><span class="rl a">ATA</span><span>${b.A.map(nm).join(', ')}</span></div>`;
     else{const pv=bl[i-1],L=(x,y)=>({out:x.filter(k=>!y.includes(k)),inn:y.filter(k=>!x.includes(k))});
       body=(lineTxt('DEF','d',L(pv.D,b.D))+lineTxt('ATA','a',L(pv.A,b.A)))||'<div class="quiet">Sin cambios</div>'}
     return `<li class="${i===cur?'cur':''}"><span class="mt">${i===0?'Inicio':'Min '+i*5}${i===5?'<small>2ª parte</small>':''}</span><div>${body}</div></li>`;
@@ -662,19 +769,12 @@ function planBodyHTML(key){
   return `<ol class="tl">${items}</ol>${tbl}`;
 }
 function openPlan(){
-  const act=scenarioKey();
-  $('planSel').innerHTML=Object.keys(PLANS).map(k=>`<option value="${esc(k)}" ${k===act?'selected':''}>${esc(PLANS[k].label)}${k===act?' · hoy':''}</option>`).join('');
-  $('planBody').innerHTML=planBodyHTML($('planSel').value);
+  const k=scenarioKey();
+  if(!k){$('planLbl').textContent='Sin plan';$('planBody').innerHTML='<p class="quiet">No hay jugadores suficientes para hacer un plan. Revisa la convocatoria en Plantilla.</p>'}
+  else{$('planLbl').textContent=PLANS[k].label+' · hoy';$('planBody').innerHTML=planBodyHTML(k)}
   $('planBg').hidden=false;
 }
 $('planBtn').onclick=openPlan;
-$('planSel').onchange=e=>{
-  const k=e.target.value,abs=PLANS[k].absent;
-  S.players.forEach(p=>{if(!p.key||p.gk)return;const was=p.present;p.present=!abs.includes(p.key);
-    if(was&&!p.present){const s=slotOf(p.id);if(s>-1){goOff(p);S.court[s]=null}}});
-  if(matchMs()===0)autoLineup();
-  save();render();openPlan();
-};
 $('planDone').onclick=()=>{$('planBg').hidden=true};
 $('planBg').addEventListener('click',e=>{if(e.target===$('planBg'))$('planBg').hidden=true});
 

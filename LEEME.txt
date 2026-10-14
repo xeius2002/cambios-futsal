@@ -43,8 +43,11 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
 
 3) EN CADA PARTIDO
 ------------------
-  - Antes de empezar: "Plantilla" > desmarca a quien no venga
-    (o "Plan" > elige el escenario). La alineación del plan se pone sola.
+  - Antes de empezar: "Plantilla" > desmarca a quien no venga. La app elige
+    el plan (uno de los 13 escenarios o uno automático calculado en el móvil)
+    y pone la alineación sola. "Plan" sirve para ver los cambios y el resumen.
+  - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
+    partido se recalcula al momento.
   - Pulsa EMPEZAR. Los cambios los hace Xavi: toca al de la pista y luego al
     del banquillo. Si se equivoca, "Deshacer".
   - En el descanso pulsa "2ª parte".
