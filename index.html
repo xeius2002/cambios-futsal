@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1e4a86">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cambios">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Cambios Futsal</title>
+<style>
+@font-face{font-family:'Saira';font-style:normal;font-weight:400;font-display:swap;src:url(saira-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Saira';font-style:normal;font-weight:500;font-display:swap;src:url(saira-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Saira';font-style:normal;font-weight:600;font-display:swap;src:url(saira-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:500;font-display:swap;src:url(saira-condensed-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(saira-condensed-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(saira-condensed-latin-700-normal.woff2) format('woff2')}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+
+/* Layout: móvil primero. Marcador fijo arriba, tarjeta de sugerencia, lista "En pista" y lista "Banquillo" con filas grandes para tocar */
+:root{
+  --bg:#eef1f5; --surface:#ffffff; --surface-2:#f3f5f8; --ink:#132030; --muted:#5a6779; --line:#d6dce5;
+  --accent:#ee6418; --accent-ink:#ffffff; --accent-soft:#fde9dc;
+  --def:#2f6fc0; --def-soft:#dce8f7; --att:#cf3a2a; --att-soft:#f9e0dc; --gk:#5a6779; --gk-soft:#e5e9ef;
+  --court:#2b62ad; --court-out:#1e4a86; --court-line:rgba(255,255,255,.82); --chip:#ffffff; --chip-ink:#132030; --chip-muted:#5a6779;
+  --ok:#22995a; --warn:#e3a00c; --bad:#d23a22; --in:#1d8a4a; --out:#c4361b;
+  --font-display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --font-body:"Saira",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b121a; --surface:#141f2d; --surface-2:#1a2737; --ink:#e8edf4; --muted:#8f9cad; --line:#253447;
+  --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
+  --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
+  --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
+  --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b121a; --surface:#141f2d; --surface-2:#1a2737; --ink:#e8edf4; --muted:#8f9cad; --line:#253447;
+  --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
+  --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
+  --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
+  --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));
+  padding-block:0 40px;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;text-align:left}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Marcador fijo */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:10px 8px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.clockrow{display:flex;align-items:center;gap:12px}
+.clockbox{flex:1;min-width:0}
+.clock{font-family:var(--font-display);font-weight:700;font-size:58px;line-height:.9;font-variant-numeric:tabular-nums}
+.clock.paused{color:var(--muted)}
+.meta{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.go{height:64px;min-width:132px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-family:var(--font-display);font-size:24px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.go.running{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
+.bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent)}
+.bar.over>i{background:var(--warn)}
+.tools{display:flex;gap:6px}
+.tool{flex:1;height:36px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:600;text-align:center}
+.tool:disabled{opacity:.4}
+.tool.danger{color:var(--out)}
+
+/* Sugerencia */
+.sugg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.sugg.urgent{background:var(--accent-soft);border-color:var(--accent)}
+.sugg h2{margin:0;font-family:var(--font-display);font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sugg.urgent h2{color:var(--accent)}
+.sg{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:baseline}
+.sg+.sg{border-top:1px solid var(--line);padding-top:8px}
+.sg .who{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.1;white-space:nowrap}
+.sg .o{color:var(--out)}.sg .i{color:var(--in)}
+.sg small{color:var(--muted);font-size:13px;line-height:1.3}
+.quiet{color:var(--muted);font-size:14px;line-height:1.4}
+.nextc{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.minute{font-family:var(--font-display);font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.when{font-family:var(--font-display);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.when.now{color:var(--accent)}
+.lns{display:flex;flex-direction:column;gap:6px}
+.ln{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:baseline;font-size:16px}
+.ln .o{color:var(--out)}.ln .i{color:var(--in)}
+.rl{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.06em;padding:1px 7px;border-radius:5px}
+.rl.d{background:var(--def-soft);color:var(--def)}.rl.a{background:var(--att-soft);color:var(--att)}
+.warnl{font-size:13px;color:var(--bad);line-height:1.4}
+.planselect{height:42px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:600;padding:0 10px;width:100%}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:8px 6px;border-top:1px solid var(--line);align-items:start}
+.tl li>div{display:flex;flex-direction:column;gap:4px}
+.tl li.cur{background:var(--accent-soft);border-radius:8px}
+.tl .mt{font-family:var(--font-display);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+.tl .mt small{display:block;font-family:var(--font-body);font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.tl .ln{font-size:14px}
+.tw{overflow-x:auto}
+table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.rot th,.rot td{padding:4px 4px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+.rot th{font-size:11px;color:var(--muted);font-weight:600}
+.rot td:first-child,.rot th:first-child{text-align:left;font-weight:600;padding-right:8px}
+.rot td.c{width:24px;font-family:var(--font-display);font-weight:700}
+.rot td.D{background:var(--def-soft);color:var(--def)}.rot td.A{background:var(--att-soft);color:var(--att)}
+.rot .now{outline:2px solid var(--accent);outline-offset:-2px}
+.rot td.n{font-family:var(--font-display);font-weight:600;font-size:14px}
+
+/* Listas */
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:0 2px}
+.sec-h h2{margin:0;font-family:var(--font-display);font-size:18px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.sec-h span{color:var(--muted);font-size:12px;text-align:right}
+.list{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.row{width:100%;min-height:58px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px 6px 8px;transition:transform .1s}
+.row:active{transform:scale(.985)}
+.role{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.06em;border-radius:7px;height:30px;display:grid;place-items:center}
+.role.D{background:var(--def-soft);color:var(--def)}.role.A{background:var(--att-soft);color:var(--att)}.role.G{background:var(--gk-soft);color:var(--gk)}
+.mid{min-width:0;display:flex;flex-direction:column;gap:3px}
+.nm{font-family:var(--font-display);font-weight:700;font-size:21px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.tot{font-family:var(--font-display);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums;text-align:right;line-height:1}
+.tot small{display:block;font-family:var(--font-body);font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.st{display:flex;align-items:center;gap:8px}
+.st .track{flex:1;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;max-width:140px}
+.st .track i{display:block;height:100%;width:0;background:var(--ok);border-radius:3px}
+.st.w .track i{background:var(--warn)}.st.b .track i{background:var(--bad)}
+.st.b .sub{color:var(--bad);font-weight:600}
+.row.empty{border-style:dashed;background:transparent}
+.row.empty .nm{color:var(--muted);font-size:16px;font-weight:600}
+.row.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.row.sOut{border-color:var(--out);box-shadow:inset 4px 0 0 var(--out)}
+.row.sIn{border-color:var(--in);box-shadow:inset 4px 0 0 var(--in)}
+.row.sel.sOut,.row.sel.sIn{box-shadow:0 0 0 2px var(--accent)}
+.tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:3px;font-family:var(--font-body)}
+.sOut .tag{background:var(--out);color:var(--surface)}.sIn .tag{background:var(--in);color:var(--surface)}
+.court-wrap{background:var(--court-out);border-radius:14px;padding:8px;margin-top:6px}
+.court{position:relative;width:100%;max-width:100%;aspect-ratio:2/1;min-height:200px;background:var(--court);border-radius:4px;overflow:hidden}
+.court svg{position:absolute;inset:0;width:100%;height:100%}
+.pchip{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:clamp(76px,23%,132px);
+  background:var(--chip);color:var(--chip-ink);border-radius:11px;padding:4px 5px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;
+  box-shadow:0 3px 0 rgba(0,0,0,.2);text-align:center;transition:transform .1s}
+.pchip:active{transform:translate(-50%,-50%) scale(.96)}
+.pchip .pl{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:.1em;padding:0 6px;border-radius:4px;line-height:1.5;text-transform:uppercase}
+.pchip .pl.D{background:var(--def);color:#fff}.pchip .pl.A{background:var(--att);color:#fff}.pchip .pl.G{background:#5a6779;color:#fff}
+.pchip.sOut .pl{background:var(--out)!important;color:#fff}
+.pchip .nm{font-size:clamp(15px,4.4vw,21px);max-width:100%;color:var(--chip-ink)}
+.pchip .st{width:100%;flex-direction:column;gap:1px}
+.pchip .st .track{width:100%;max-width:none;height:5px;background:#dde3ea}
+.pchip .sub{font-size:11px;color:var(--chip-muted)}
+.pchip .st.b .sub{color:#c4361b}
+.pchip .tt{font-family:var(--font-display);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;color:var(--chip-ink);line-height:1}
+.pchip .tt small{font-family:var(--font-body);font-size:9px;color:var(--chip-muted);text-transform:uppercase;letter-spacing:.04em}
+.pchip.sOut{box-shadow:0 0 0 3px var(--out),0 3px 0 rgba(0,0,0,.2)}
+.pchip.sel{box-shadow:0 0 0 3px var(--accent),0 6px 14px rgba(0,0,0,.3);transform:translate(-50%,-50%) scale(1.04)}
+.pchip.empty{background:transparent;border:2px dashed var(--court-line);box-shadow:none;min-height:56px;justify-content:center}
+.pchip.empty .nm{color:var(--court-line);font-size:14px}
+.pchip.empty.sel{background:rgba(255,255,255,.15)}
+@media (max-width:420px){.pchip{width:25%;padding:3px 3px 4px}.pchip .tt small{display:none}}
+.hint{background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:10px 12px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.hint button{height:36px;padding:0 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:13px;white-space:nowrap}
+
+/* Registro */
+.log{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:2px 12px;font-size:14px;margin-top:6px}
+.log ol{list-style:none;margin:0;padding:0}
+.log li{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line);align-items:baseline}
+.log li:first-child{border-top:0}
+.log .lt{font-family:var(--font-display);font-weight:600;font-variant-numeric:tabular-nums;min-width:58px;color:var(--muted)}
+.log .in{color:var(--in);font-weight:600}.log .out{color:var(--out);font-weight:600}
+.log .none{color:var(--muted);padding:9px 0}
+
+/* Aviso deshacer */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:70;
+  width:min(520px,calc(100% - 24px));background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 10px 10px 14px;
+  display:flex;align-items:center;gap:10px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast span{flex:1;min-width:0}
+.toast button{height:38px;padding:0 14px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-weight:700}
+
+/* Plantilla */
+.sheet-bg{position:fixed;inset:0;background:rgba(8,14,22,.55);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:560px;max-height:90%;overflow:auto;border-radius:16px 16px 0 0;
+  padding:16px max(14px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:10px;-webkit-user-select:text;user-select:text}
+.sheet h3{margin:0;font-family:var(--font-display);font-size:24px;text-transform:uppercase;letter-spacing:.06em}
+.note{font-size:13px;color:var(--muted);margin:0;line-height:1.4}
+.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.prow.absent .pn{opacity:.4;text-decoration:line-through}
+.chk{width:26px;height:26px;accent-color:var(--accent)}
+.pn{display:flex;flex-direction:column;min-width:0}
+.pn input{height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:600;padding:0 8px;min-width:0;width:100%}
+.pn small{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{width:40px;height:36px;text-align:center;font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.cardio{display:flex;flex-direction:column;gap:4px}
+.seg em{font-style:normal;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;width:38px;display:grid;place-items:center;border-right:1px solid var(--line)}
+.cardio .seg button{width:34px;height:30px;font-size:15px}
+.seg.gk{border:0;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;padding:0 4px;align-items:center}
+.sheet .settings{display:flex;gap:10px;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid var(--line)}
+.sheet .settings input{width:64px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;text-align:center}
+.sheet .foot{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.btn{height:42px;padding:0 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-weight:600;font-size:14px;text-align:center}
+.btn.main{background:var(--accent);color:var(--accent-ink);border-color:transparent;min-width:110px;font-family:var(--font-display);font-size:19px;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="clockrow">
+      <div class="clockbox">
+        <div class="clock paused" id="clock">00:00</div>
+        <div class="meta" id="meta">1ª parte · de 25:00</div>
+      </div>
+      <button class="go" id="go">Empezar</button>
+    </div>
+    <div class="bar" id="bar"><i></i></div>
+    <div class="tools">
+      <button class="tool" id="half">2ª parte</button>
+      <button class="tool" id="roster">Plantilla</button>
+      <button class="tool" id="planBtn">Plan</button>
+      <button class="tool danger" id="reset">Reiniciar</button>
+    </div>
+  </header>
+
+  <section class="sugg" id="sugg" aria-live="polite"></section>
+
+  <section>
+    <div class="sec-h"><h2>En pista</h2><span id="courtInfo"></span></div>
+    <div class="court-wrap"><div class="court" id="court"></div></div>
+  </section>
+
+  <div id="hint"></div>
+
+  <section>
+    <div class="sec-h"><h2>Banquillo</h2><span>Toca uno en pista y otro aquí para cambiarlos</span></div>
+    <ul class="list" id="bench"></ul>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>Cambios</h2><span id="logInfo"></span></div>
+    <div class="log" id="log"></div>
+  </section>
+</div>
+
+<div class="sheet-bg" id="planBg" hidden>
+  <div class="sheet" role="dialog" aria-label="Plan de rotación">
+    <h3>Plan de rotación</h3>
+    <label class="note" for="planSel">Escenario del partido (al elegirlo se marca quién viene en Plantilla)</label>
+    <select id="planSel" class="planselect"></select>
+    <div id="planBody"></div>
+    <p class="note">Criterio: siempre uno de Ruben, Joan o Roger en defensa (Bernat solo si faltan) y uno de Bernat, Ignasi o Pau J. en ataque; nunca dos de los más flojos en la misma línea. Respeta el cardio ideal y máximo de cada uno. Es una guía: los cambios los haces tú.</p>
+    <div class="foot"><span></span><button class="btn main" id="planDone">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden><span id="toastTxt"></span><button id="undo">Deshacer</button></div>
+
+<div class="sheet-bg" id="sheetBg" hidden>
+  <div class="sheet" role="dialog" aria-label="Plantilla">
+    <h3>Plantilla</h3>
+    <p class="note">Desmarca a quien no venga. Cardio en minutos seguidos: <b>Ideal</b> es cuándo se sugiere sacarlo; <b>Máx</b> es lo que no debería pasar nunca.</p>
+    <div id="rows"></div>
+    <button class="btn" id="addP">+ Añadir jugador</button>
+    <div class="settings"><label for="cfgHalf" class="note">Minutos por parte</label><input id="cfgHalf" inputmode="numeric"></div>
+    <div class="foot"><span class="note">Se guarda en este móvil.</span><button class="btn main" id="done">Listo</button></div>
+  </div>
+</div>
+
+<script>
+const KEY='cambios-futsal-v5';
+const GK='Sadurní';
+/* Del Excel del entrenador. w = peso de minutos (como en sus cuadrantes); D/A = encaje en defensa/ataque: 0 preferida, 1 también, 3 no */
+const INFO={
+  'Ruben': {w:20,t:1,D:0,A:3,pos:'Defensa'},
+  'Joan':  {w:20,t:1,D:0,A:1,pos:'Defensa o delantero'},
+  'Bernat':{w:20,t:1,D:1,A:0,pos:'Delantero o defensa'},
+  'Roger': {w:20,t:1,D:0,A:1,pos:'Defensa (prioridad) o delantero'},
+  'Ignasi':{w:20,t:1,D:3,A:0,pos:'Delantero'},
+  'Pau J.':{w:20,t:2,D:3,A:0,pos:'Delantero'},
+  'Pau N.':{w:20,t:2,D:1,A:0,pos:'Polivalente, prioriza delantero'},
+  'Xufre': {w:20,t:2,D:0,A:3,pos:'Defensa'},
+  'Lucas': {w:20,t:2,D:0,A:1,pos:'Polivalente, mejor defensa'},
+  'Félix': {w:20,t:3,D:1,A:0,pos:'Polivalente, prioriza delantero'},
+  'Txesko':{w:20,t:3,D:3,A:0,pos:'Delantero'},
+};
+const TIER=['','Bueno','Aceptable','Más flojo'];
+const FIELD=Object.keys(INFO);
+const ANCH={D:['Ruben','Joan','Roger','Bernat'],A:['Bernat','Ignasi','Pau J.']};
+/* Rotaciones por escenario: 10 bloques de 5' (2 DEF + 2 ATA), minutos igualados, cardio seguido contado también a través del descanso */
+const PLANS={"tots": {"label": "Vienen todos (11)", "absent": [], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau J."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Txesko"]}]}, "Roger": {"label": "Sin Roger", "absent": ["Roger"], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Pau N."], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Bernat", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Bernat", "Pau N."], "A": ["Pau J.", "Félix"]}]}, "Ignasi": {"label": "Sin Ignasi", "absent": ["Ignasi"], "blocks": [{"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}]}, "Ignasi+Roger": {"label": "Sin Roger ni Ignasi", "absent": ["Roger", "Ignasi"], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Pau N."], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Pau N."], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Ruben": {"label": "Sin Ruben", "absent": ["Ruben"], "blocks": [{"D": ["Bernat", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Bernat", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Pau N."], "A": ["Pau J.", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Pau N."], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Pau N."]}]}, "Joan": {"label": "Sin Joan", "absent": ["Joan"], "blocks": [{"D": ["Bernat", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Bernat", "Félix"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Roger", "Pau N."], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Txesko"]}]}, "Bernat": {"label": "Sin Bernat", "absent": ["Bernat"], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Roger"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Pau J.": {"label": "Sin Pau J.", "absent": ["Pau J."], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}]}, "Pau N.": {"label": "Sin Pau N.", "absent": ["Pau N."], "blocks": [{"D": ["Roger", "Xufre"], "A": ["Ignasi", "Pau J."]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}]}, "Lucas": {"label": "Sin Lucas", "absent": ["Lucas"], "blocks": [{"D": ["Ruben", "Félix"], "A": ["Ignasi", "Pau J."]}, {"D": ["Ruben", "Joan"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Pau N."], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Pau N."], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Pau N."], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Xufre": {"label": "Sin Xufre", "absent": ["Xufre"], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Félix"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Ignasi"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Félix"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Félix"], "A": ["Ignasi", "Pau J."]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Félix"], "A": ["Pau J.", "Txesko"]}]}, "Félix": {"label": "Sin Félix", "absent": ["Félix"], "blocks": [{"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Ignasi", "Pau J."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau J."]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}]}, "Txesko": {"label": "Sin Txesko", "absent": ["Txesko"], "blocks": [{"D": ["Joan", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau J."]}]}};
+const BLOCK=5*60000;
+const ROLES=['G','D','D','A','A'],RL={G:'POR',D:'DEF',A:'ATA'};
+const CARDIO=[5,10,15];
+/* Cardio que pasó el entrenador: [ideal, máximo] en minutos seguidos */
+const CARDIO_DEF={'Ruben':[10,15],'Joan':[10,10],'Lucas':[5,10],'Bernat':[10,10],'Ignasi':[10,10],'Roger':[10,10],'Xufre':[5,10],'Pau J.':[5,10],'Pau N.':[5,10],'Félix':[5,5],'Txesko':[5,5]};
+
+const $=id=>document.getElementById(id);
+const now=()=>Date.now();
+const uid=()=>'p'+now().toString(36)+Math.random().toString(36).slice(2,7);
+const mk=(name,key,gk)=>({id:uid(),key,name,gk:!!gk,present:true,cardio:(CARDIO_DEF[key]||[10])[0],cmax:(CARDIO_DEF[key]||[10,10])[1],ms:0,since:null,stint:0,leftAt:null});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function seed(){return {players:[mk(GK,GK,true),...FIELD.map(n=>mk(n,n))],court:[null,null,null,null,null],clock:{ms:0,since:null},half:1,offset:0,cfg:{halfMin:25},log:[]}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.players&&s.court)return s}catch(e){}return null}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let S=load();const fresh=!S;if(fresh)S=seed();
+
+/* ---------- Tiempo ---------- */
+const running=()=>S.clock.since!=null;
+const clockMs=()=>S.clock.ms+(running()?now()-S.clock.since:0);
+const matchMs=()=>S.offset+clockMs();
+const P=id=>S.players.find(p=>p.id===id);
+const info=p=>(p&&p.key&&INFO[p.key])||{w:20,t:2,D:1,A:1,pos:'Polivalente'};
+const pMs=p=>p.ms+(p.since!=null?now()-p.since:0);
+const pStint=p=>p.stint+(p.since!=null?now()-p.since:0);
+const slotOf=id=>S.court.indexOf(id);
+const restMs=p=>p.leftAt==null?Infinity:Math.max(0,matchMs()-p.leftAt);
+function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function fm(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+function bank(p,t){if(p.since!=null){const d=t-p.since;p.ms+=d;p.stint+=d;p.since=null}}
+function start(){const t=now();S.clock.since=t;S.court.forEach(id=>{const p=id&&P(id);if(p)p.since=t});wake(true)}
+function pause(){const t=now();S.clock.ms+=t-S.clock.since;S.clock.since=null;S.court.forEach(id=>{const p=id&&P(id);if(p)bank(p,t)});wake(false)}
+function goOn(p){p.stint=0;p.since=running()?now():null;alerted.delete(p.id)}
+function goOff(p){bank(p,now());p.leftAt=matchMs()}
+
+/* ---------- Motor de sugerencias ---------- */
+function fieldPresent(){return S.players.filter(p=>p.present&&!p.gk)}
+function deficitMin(p){ // minutos que le faltan respecto a su ritmo objetivo (+ = va corto)
+  const T=2*S.cfg.halfMin,f=fieldPresent(),sw=f.reduce((a,x)=>a+info(x).w,0)||1;
+  const target=info(p).w/sw*4*T, pace=target*Math.min(1,matchMs()/60000/T);
+  return pace-pMs(p)/60000;
+}
+function lineOk(line,ids){
+  const ps=ids.filter(Boolean).map(P);
+  return ps.some(p=>ANCH[line].includes(p.key))&&ps.filter(p=>info(p).t===3).length<2;
+}
+function suggest(){
+  if(!running()&&matchMs()===0)return [];
+  const outs=[];
+  for(let s=1;s<5;s++){
+    const p=S.court[s]&&P(S.court[s]);if(!p)continue;
+    const r=pStint(p)/(p.cardio*60000),d=deficitMin(p),rm=pStint(p)/(p.cmax*60000);
+    if(r>=0.85)outs.push({p,s,prio:1+r+(rm>=.9?2:0),kind:'cardio',r,rm});
+    else if(pStint(p)>=3*60000&&d<-1.5)outs.push({p,s,prio:.5-d/10,kind:'bal',d});
+  }
+  // Si ya hay que parar por cardio, aprovecha la parada para quien esté cerca de su límite
+  if(outs.some(o=>o.kind==='cardio')){
+    for(let s=1;s<5;s++){const p=S.court[s]&&P(S.court[s]);if(!p||outs.some(o=>o.s===s))continue;
+      const r=pStint(p)/(p.cardio*60000);if(r>=.5)outs.push({p,s,prio:.9+r/10,kind:'cardio',r,extra:true})}
+  }
+  if(!outs.some(o=>o.kind==='cardio'))outs.length=0; // los ajustes de minutos solo se proponen aprovechando una parada
+  outs.sort((a,b)=>b.prio-a.prio);
+  const vc=S.court.slice(),res=[],used=new Set();
+  for(const o of outs.slice(0,4)){
+    const line=ROLES[o.s],partner=vc[o.s%2===1?o.s+1:o.s-1];
+    let best=null;
+    for(const c of fieldPresent()){
+      if(vc.includes(c.id)||used.has(c.id))continue;
+      const pen=info(c)[line];if(pen>=3)continue;
+      const rest=restMs(c)/60000,def=deficitMin(c),ok=lineOk(line,[partner,c.id]);
+      if(rest<(ok?1.5:2))continue;
+      if(o.kind==='bal'&&def<=deficitMin(o.p)+2)continue;
+      const score=def+Math.min(rest,8)*.25+(rest>=c.cardio?1:0)-pen*2+(ok?0:-100);
+      if(!best||score>best.score)best={c,score,ok,rest,def};
+    }
+    if(!best||(!best.ok&&(o.kind==='bal'||o.extra)))continue;
+    used.add(best.c.id);vc[o.s]=best.c.id;
+    res.push({out:o,inn:best,line});
+  }
+  return res;
+}
+function nextTired(){
+  let b=null;
+  for(let s=1;s<5;s++){const p=S.court[s]&&P(S.court[s]);if(!p)continue;const left=p.cardio*60000-pStint(p);if(p.gk)continue;if(!b||left<b.left)b={p,left}}
+  return b;
+}
+function autoLineup(){
+  const pk=scenarioKey();
+  if(pk){const b=PLANS[pk].blocks[0],gk=S.players.find(p=>p.gk&&p.present);S.court=[gk?gk.id:null,...b.D.map(idByKey),...b.A.map(idByKey)];return}
+  const f=fieldPresent(),used=new Set(),pick=(line)=>{
+    const cand=f.filter(p=>!used.has(p.id)&&info(p)[line]<3).sort((a,b)=>info(a)[line]-info(b)[line]||info(b).w-info(a).w);
+    const first=cand.find(p=>ANCH[line].includes(p.key)&&info(p)[line]===0)||cand[0];if(first)used.add(first.id);
+    const second=cand.find(p=>!used.has(p.id));if(second)used.add(second.id);
+    return [first?first.id:null,second?second.id:null];
+  };
+  const gk=S.players.find(p=>p.gk&&p.present);
+  const d=pick('D'),a=pick('A');
+  S.court=[gk?gk.id:null,...d,...a];
+}
+
+/* ---------- Plan por escenario ---------- */
+function scenarioKey(){
+  const abs=FIELD.filter(k=>!S.players.some(p=>p.key===k&&p.present)).sort();
+  return Object.keys(PLANS).find(k=>{const a=PLANS[k].absent.slice().sort();return a.length===abs.length&&a.every((x,i)=>x===abs[i])})||null;
+}
+const idByKey=k=>{const p=S.players.find(p=>p.key===k&&p.present);return p?p.id:null};
+function planDiff(key,i){
+  const b=PLANS[key].blocks[i];
+  const keyOf=id=>{const p=id&&P(id);return p?(p.key||p.name):null};
+  const cur={D:[S.court[1],S.court[2]].map(keyOf).filter(Boolean),A:[S.court[3],S.court[4]].map(keyOf).filter(Boolean)};
+  const r={i,b,D:{out:cur.D.filter(k=>!b.D.includes(k)),inn:b.D.filter(k=>!cur.D.includes(k))},A:{out:cur.A.filter(k=>!b.A.includes(k)),inn:b.A.filter(k=>!cur.A.includes(k))}};
+  const want=new Set([...b.D,...b.A]);
+  r.outs=S.court.slice(1).filter(id=>id&&!want.has(P(id).key));
+  r.ins=[...b.D,...b.A].map(idByKey).filter(id=>id&&!S.court.includes(id));
+  r.empty=!r.D.out.length&&!r.D.inn.length&&!r.A.out.length&&!r.A.inn.length;
+  return r;
+}
+function planState(){
+  const key=scenarioKey();if(!key)return null;
+  const m=matchMs(),cur=Math.min(9,Math.floor(m/BLOCK)),pre=m===0&&!running();
+  const d=planDiff(key,cur);
+  if(!d.empty)return {key,due:!pre,pre,d,at:cur*5,left:0};
+  if(cur>=9)return {key,done:true};
+  return {key,due:false,d:planDiff(key,cur+1),at:(cur+1)*5,left:(cur+1)*BLOCK-m};
+}
+
+/* ---------- Cambios manuales ---------- */
+let sel=null,undoSnap=null,toastT=0;
+function logSub(ins,outs){if(!ins.length&&!outs.length)return;S.log.unshift({t:clockMs(),half:S.half,ins:ins.map(id=>P(id).name),outs:outs.map(id=>P(id).name)})}
+function commit(msg){save();render();if(msg)toast(msg)}
+function snapshot(){undoSnap=JSON.stringify(S)}
+function doTap(t){ // t: {id} o {slot}
+  if(!sel){sel=t;render();return}
+  const a=sel;sel=null;
+  const same=(a.id&&a.id===t.id)||(a.slot!=null&&a.slot===t.slot&&!a.id&&!t.id);
+  if(same){render();return}
+  const sa=a.id?slotOf(a.id):a.slot, sb=t.id?slotOf(t.id):t.slot;
+  const aOn=sa>-1&&sa!=null, bOn=sb>-1&&sb!=null;
+  if(!aOn&&!bOn){sel=t;render();return}               // dos del banquillo: cambia la selección
+  snapshot();
+  if(aOn&&bOn){                                         // mover dentro de la pista
+    const x=S.court[sa];S.court[sa]=S.court[sb];S.court[sb]=x;
+    return commit('Posiciones cambiadas');
+  }
+  const slot=aOn?sa:sb, benchId=aOn?t.id:a.id, outId=S.court[slot];
+  const inP=P(benchId);
+  if(outId){goOff(P(outId))}
+  S.court[slot]=benchId;goOn(inP);
+  logSub([benchId],outId?[outId]:[]);
+  commit(outId?`Entra ${inP.name} · sale ${P(outId).name}`:`Entra ${inP.name}`);
+}
+function sitDown(){
+  if(!sel||!sel.id)return;const s=slotOf(sel.id);if(s<0)return;
+  snapshot();const p=P(sel.id);goOff(p);S.court[s]=null;logSub([],[p.id]);sel=null;commit(`${p.name} al banquillo`);
+}
+function toast(msg){$('toastTxt').textContent=msg;$('toast').hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{$('toast').hidden=true;undoSnap=null},6000)}
+$('undo').onclick=()=>{if(!undoSnap)return;S=JSON.parse(undoSnap);undoSnap=null;sel=null;$('toast').hidden=true;
+  if(running()!==(S.clock.since!=null))wake(running());save();render()};
+
+/* ---------- Render ---------- */
+let SG=[],sgSig='',PS=null,MK={outs:new Set(),ins:new Set()};
+const POSXY=[[12.5,50],[38.5,25],[38.5,75],[74,25],[74,75]];
+const COURT_SVG=`<svg viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="var(--court-line)" stroke-width="2">
+<rect x="1" y="1" width="398" height="198"/><line x1="200" y1="1" x2="200" y2="199"/><circle cx="200" cy="100" r="30"/>
+<circle cx="200" cy="100" r="2.5" fill="var(--court-line)"/>
+<path d="M1 28 A58 58 0 0 1 59 86 L59 114 A58 58 0 0 1 1 172"/><path d="M399 28 A58 58 0 0 0 341 86 L341 114 A58 58 0 0 0 399 172"/>
+<circle cx="60" cy="100" r="2.5" fill="var(--court-line)"/><circle cx="340" cy="100" r="2.5" fill="var(--court-line)"/>
+<circle cx="100" cy="100" r="2.5" fill="var(--court-line)"/><circle cx="300" cy="100" r="2.5" fill="var(--court-line)"/>
+<line x1="1" y1="85" x2="1" y2="115" stroke-width="7"/><line x1="399" y1="85" x2="399" y2="115" stroke-width="7"/></svg>`;
+function courtRow(i){
+  const role=ROLES[i],p=S.court[i]&&P(S.court[i]),[x,y]=POSXY[i];
+  const isSel=sel&&((sel.id&&p&&sel.id===p.id)||(!sel.id&&sel.slot===i));
+  const pos=`style="--x:${x}%;--y:${y}%"`;
+  if(!p)return `<button class="pchip empty ${isSel?'sel':''}" data-slot="${i}" ${pos}><span class="pl ${role}">${RL[role]}</span><span class="nm">Vacío</span></button>`;
+  const sOut=MK.outs.has(p.id);
+  return `<button class="pchip ${role} ${sOut?'sOut':''} ${isSel?'sel':''}" data-id="${p.id}" ${pos}>
+    <span class="pl ${role}">${sOut?'Sale':RL[role]}</span><span class="nm">${esc(p.name)}</span>
+    ${p.gk?'<span class="sub">Portero</span>':'<span class="st" data-st><span class="track"><i></i></span><span class="sub" data-k="st"></span></span>'}
+    <span class="tt" data-k="t"></span></button>`;
+}
+function benchRow(p){
+  const sIn=MK.ins.has(p.id),isSel=sel&&sel.id===p.id;
+  const line=p.gk?'G':(info(p).D<=info(p).A?'D':'A');
+  return `<li><button class="row ${sIn?'sIn':''} ${isSel?'sel':''}" data-id="${p.id}"><span class="role ${line}">${p.gk?'POR':line==='D'?'DEF':'ATA'}</span>
+    <span class="mid"><span class="nm">${esc(p.name)}${sIn?'<span class="tag">Entra</span>':''}</span><span class="sub" data-k="bs"></span></span>
+    <span class="tot" data-k="t"></span></button></li>`;
+}
+const nm=k=>esc(k);
+function lineTxt(role,cls,x){
+  if(!x.out.length&&!x.inn.length)return '';
+  return `<div class="ln"><span class="rl ${cls}">${role}</span>${x.out.length?`<span>sale <b class="o">${x.out.map(nm).join(', ')}</b></span>`:''}${x.inn.length?`<span>entra <b class="i">${x.inn.map(nm).join(', ')}</b></span>`:''}</div>`;
+}
+function cardioWarn(){
+  const w=[];
+  for(let s=1;s<5;s++){const p=S.court[s]&&P(S.court[s]);if(!p)continue;const ms=pStint(p);
+    if(ms>=p.cmax*60000)w.push(`<b>${esc(p.name)}</b> ha llegado a su máximo (${p.cmax}')`);
+    else if(ms>=p.cardio*60000&&!MK.outs.has(p.id))w.push(`<b>${esc(p.name)}</b> pasa de su ideal (${p.cardio}')`)}
+  return w.length?`<div class="warnl">⚠ ${w.join(' · ')}</div>`:'';
+}
+function suggHTML(){
+  if(PS){
+    const lbl=esc(PLANS[PS.key].label);
+    if(PS.done)return `<h2>Plan · ${lbl}</h2><div class="quiet">Último bloque. No quedan cambios en el plan.</div>${cardioWarn()}`;
+    const d=PS.d;
+    if(PS.pre)return `<h2>Plan · ${lbl}</h2><div class="quiet">La alineación no coincide con el inicio del plan:</div><div class="lns">${lineTxt('DEF','d',d.D)}${lineTxt('ATA','a',d.A)}</div>`;
+    const when=PS.due?'<span class="when now">Ahora</span>':`<span class="when">en ${fm(PS.left)}</span>`;
+    const head=!running()&&matchMs()===0?`<h2>Plan · ${lbl}</h2><div class="quiet">Alineación del plan lista. Pulsa Empezar.</div>`:`<h2>Plan · ${lbl}</h2>`;
+    return `${head}<div class="nextc"><span class="minute">${PS.due?'Toca el cambio del minuto':'Próximo cambio · minuto'} ${PS.at}</span>${when}</div><div class="lns">${lineTxt('DEF','d',d.D)}${lineTxt('ATA','a',d.A)}</div>${cardioWarn()}`;
+  }
+  if(!running()&&matchMs()===0)return `<h2>Antes de empezar</h2><div class="quiet">Revisa la alineación y pulsa Empezar. Para cambiar a alguien, toca un jugador en pista y luego uno del banquillo.</div>`;
+  if(!SG.length){
+    const t=nextTired();
+    return `<h2>Sugerencia</h2><div class="quiet">Sin cambios por ahora.${t&&t.left>0?` El próximo en llegar a su límite es <b>${esc(t.p.name)}</b>, en ${fm(t.left)}.`:''}</div>`;
+  }
+  return `<h2>${SG.length>1?'Cambios sugeridos':'Cambio sugerido'}</h2>`+SG.map(g=>{
+    const o=g.out,p=o.p,c=g.inn.c;
+    const why=o.kind==='cardio'?(o.rm>=1?`¡pasado de su máximo de ${p.cmax}'!`:o.r>=1?`lleva ${fm(pStint(p))}, ideal ${p.cardio}' (máx ${p.cmax}')`:`lleva ${fm(pStint(p))} seguido, ideal ${p.cardio}'`):`va sobrado de minutos`;
+    const rin=g.inn.rest===Infinity?'aún no ha jugado':`descansa ${fm(g.inn.rest*60000)}`;
+    const def=g.inn.def>=1?` · le faltan ${Math.round(g.inn.def)}'`:'';
+    return `<div class="sg"><span class="who o">↓ ${esc(p.name)}</span><small>${why}</small><span class="who i">↑ ${esc(c.name)}</span><small>${rin}${def}${g.inn.ok?'':' · ojo, la línea queda sin referente'}</small></div>`;
+  }).join('');
+}
+function computeMarks(){
+  PS=planState();SG=PS?[]:suggest();
+  if(PS&&PS.d&&(PS.due||PS.pre||PS.left<=60000))MK={outs:new Set(PS.d.outs),ins:new Set(PS.d.ins)};
+  else if(PS)MK={outs:new Set(),ins:new Set()};
+  else MK={outs:new Set(SG.map(g=>g.out.p.id)),ins:new Set(SG.map(g=>g.inn.c.id))};
+}
+function render(){
+  computeMarks();sgSig=sig();
+  $('court').innerHTML=COURT_SVG+[0,1,2,3,4].map(courtRow).join('');
+  const lineOf=p=>p.gk?0:info(p).D<=info(p).A?1:2;
+  const bench=S.players.filter(p=>p.present&&slotOf(p.id)<0).sort((a,b)=>lineOf(a)-lineOf(b)||FIELD.indexOf(a.key)-FIELD.indexOf(b.key));
+  $('bench').innerHTML=bench.length?bench.map(benchRow).join(''):`<li class="quiet">No queda nadie en el banquillo.</li>`;
+  $('courtInfo').textContent=`${S.court.filter(Boolean).length}/5`;
+  const selCourt=sel&&sel.id&&slotOf(sel.id)>-1;
+  $('hint').innerHTML=sel?`<div class="hint"><span>${selCourt?`<b>${esc(P(sel.id).name)}</b>: toca quién entra por él`:sel.id?`<b>${esc(P(sel.id).name)}</b>: toca a quién sustituye en pista`:'Toca un suplente para ponerlo aquí'}</span>${selCourt?'<button id="sit">Sentarlo sin cambio</button>':''}<button id="cancel">Cancelar</button></div>`:'';
+  const L=S.log;$('logInfo').textContent=L.length?`${L.length}`:'';
+  $('log').innerHTML=L.length?`<ol>${L.slice(0,60).map(x=>`<li><span class="lt">${x.half}ª ${fmt(x.t)}</span><span>${x.ins.length?`<span class="in">↑ ${x.ins.map(esc).join(', ')}</span>`:''}${x.ins.length&&x.outs.length?' &nbsp;':''}${x.outs.length?`<span class="out">↓ ${x.outs.map(esc).join(', ')}</span>`:''}</span></li>`).join('')}</ol>`:`<div class="none">Aquí aparecerán los cambios con el minuto.</div>`;
+  $('half').disabled=S.half===2;
+  $('sugg').innerHTML=suggHTML();
+  tick();
+}
+const sig=()=>[...MK.outs].join()+'>'+[...MK.ins].join()+(PS?(PS.at+'|'+PS.due+'|'+PS.done+'|'+PS.key):'')+(running()?'r':'')+(matchMs()===0?'0':'');
+
+const alerted=new Map();
+function tick(){
+  const c=clockMs(),r=running(),m=matchMs();
+  $('clock').textContent=fmt(c);$('clock').classList.toggle('paused',!r);
+  $('go').textContent=r?'Pausa':(c>0||m>0?'Seguir':'Empezar');$('go').classList.toggle('running',r);
+  const tot=S.cfg.halfMin*60000;$('bar').firstElementChild.style.width=Math.min(100,c/tot*100)+'%';$('bar').classList.toggle('over',c>tot);
+  $('meta').textContent=`${S.half}ª parte · de ${fmt(tot)}`;
+  let urgent=false;
+  document.querySelectorAll('.row[data-id],.pchip[data-id]').forEach(el=>{
+    const chip=el.classList.contains('pchip');
+    const p=P(el.dataset.id);if(!p)return;
+    el.querySelector('[data-k=t]').innerHTML=chip?`${fmt(pMs(p))} <small>total</small>`:`${fmt(pMs(p))}<small>total</small>`;
+    const st=el.querySelector('[data-st]');
+    if(st){
+      const ms=pStint(p),ratio=ms/(p.cardio*60000),rmax=ms/(p.cmax*60000);
+      st.querySelector('i').style.width=Math.min(100,rmax*100)+'%';
+      st.className='st'+(rmax>=1?' b':ratio>=.85?' w':'');
+      const mx=p.cmax>p.cardio?` (máx ${p.cmax}')`:'';
+      st.querySelector('[data-k=st]').textContent=chip?(rmax>=1?`${fm(ms)} ¡máx!`:`${fm(ms)} / ${p.cardio}'`):rmax>=1?`${fm(ms)} · ¡máximo ${p.cmax}'!`:ratio>=1?`${fm(ms)} · pasa del ideal ${p.cardio}'${mx}`:`${fm(ms)} de ${p.cardio}'${mx}`;
+      if(ratio>=1)urgent=true;
+      const stage=rmax>=1?2:ratio>=1?1:0,prev=alerted.get(p.id)||0;
+      if(r&&stage>prev){alerted.set(p.id,stage);beep(stage)}
+    }
+    const bs=el.querySelector('[data-k=bs]');
+    if(bs){
+      if(p.gk){bs.textContent='Portero';return}
+      const rest=restMs(p),d=deficitMin(p);
+      const pace=m===0?'':Math.abs(d)<1?' · al día':d>0?` · le faltan ${Math.round(d)}'`:` · sobrado ${Math.round(-d)}'`;
+      bs.textContent=(rest===Infinity?'sin jugar':'descansa '+fm(rest))+pace+` · aguanta ${p.cardio}'${p.cmax>p.cardio?'–'+p.cmax+"'":''}`;
+    }
+  });
+  $('sugg').classList.toggle('urgent',PS?!!(PS.due||PS.pre):(urgent||SG.some(g=>g.out.kind==='cardio')));
+  const wn=document.querySelector('#sugg .when:not(.now)');if(wn&&PS&&!PS.due&&!PS.done)wn.textContent='en '+fm(Math.max(0,(PS.at/5)*BLOCK-m));
+}
+setInterval(tick,250);
+setInterval(()=>{const old=sgSig;computeMarks();if(sig()!==old)render()},1000);
+
+/* Pitido al pasar el límite (el audio se habilita al pulsar Empezar) */
+let ac=null;
+function audioOn(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){ac=null}}
+function beep(stage=1){
+  try{navigator.vibrate&&navigator.vibrate(stage>1?[300,100,300,100,300]:[200])}catch(e){}
+  if(!ac)return;try{(stage>1?[0,.25,.5]:[0]).forEach(d=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);
+    const t=ac.currentTime+d;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.4,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.start(t);o.stop(t+.2)})}catch(e){}
+}
+
+/* ---------- Toques ---------- */
+document.addEventListener('click',e=>{
+  if(e.target.closest('#sit'))return sitDown();
+  if(e.target.closest('#cancel')){sel=null;return render()}
+  const row=e.target.closest('.row,.pchip');if(!row||!(row.closest('.list')||row.closest('.court')))return;
+  doTap(row.dataset.id?{id:row.dataset.id}:{slot:+row.dataset.slot});
+});
+$('go').onclick=()=>{audioOn();running()?pause():start();save();render()};
+let halfArm=0,resetArm=0;
+$('half').onclick=()=>{
+  if(now()-halfArm>3000){halfArm=now();$('half').textContent='¿Seguro?';setTimeout(()=>{$('half').textContent='2ª parte'},3000);return}
+  if(running())pause();S.offset+=S.clock.ms;S.clock.ms=0;S.half=2;$('half').textContent='2ª parte';save();render();
+};
+$('reset').onclick=()=>{
+  if(now()-resetArm>3000){resetArm=now();$('reset').textContent='¿Seguro?';setTimeout(()=>{$('reset').textContent='Reiniciar'},3000);return}
+  if(running())pause();
+  S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null});
+  S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];sel=null;alerted.clear();autoLineup();
+  $('reset').textContent='Reiniciar';save();render();
+};
+
+/* ---------- Plantilla ---------- */
+function openRoster(){$('sheetBg').hidden=false;drawRows();$('cfgHalf').value=S.cfg.halfMin}
+function drawRows(){
+  const order=p=>p.gk?-1:p.key?FIELD.indexOf(p.key):99;
+  $('rows').innerHTML=S.players.slice().sort((a,b)=>order(a)-order(b)).map(p=>{
+    const i=info(p);
+    return `<div class="prow ${p.present?'':'absent'}" data-id="${p.id}">
+      <input type="checkbox" class="chk" id="c-${p.id}" ${p.present?'checked':''} aria-label="Viene ${esc(p.name)}">
+      <span class="pn"><input id="m-${p.id}" value="${esc(p.name)}" placeholder="Nombre" aria-label="Nombre"><small>${p.gk?'Portero':`${TIER[i.t]} · ${i.pos}`}</small></span>
+      ${p.gk?'<span class="seg gk">FIJO</span>':`<span class="cardio"><span class="seg"><em>Ideal</em>${CARDIO.map(v=>`<button data-v="${v}" class="${p.cardio===v?'on':''}" aria-label="Ideal ${v} minutos">${v}</button>`).join('')}</span><span class="seg"><em>Máx</em>${CARDIO.map(v=>`<button data-m="${v}" class="${p.cmax===v?'on':''}" aria-label="Máximo ${v} minutos">${v}</button>`).join('')}</span></span>`}
+      ${!p.key?`<button class="btn" data-del="${p.id}" style="grid-column:2/-1;color:var(--out)">Quitar</button>`:''}</div>`}).join('');
+}
+$('rows').addEventListener('change',e=>{
+  if(e.target.type!=='checkbox')return;const p=P(e.target.closest('.prow').dataset.id);
+  p.present=e.target.checked;
+  const s=slotOf(p.id);if(!p.present&&s>-1){goOff(p);S.court[s]=null}
+  if(matchMs()===0)autoLineup();
+  save();drawRows();
+});
+$('rows').addEventListener('input',e=>{if(e.target.type==='checkbox')return;const p=P(e.target.closest('.prow').dataset.id);p.name=e.target.value.slice(0,16);save()});
+$('rows').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const p=P(b.closest('.prow').dataset.id);
+  if(b.dataset.v){p.cardio=+b.dataset.v;if(p.cmax<p.cardio)p.cmax=p.cardio;save();drawRows()}
+  else if(b.dataset.m){p.cmax=+b.dataset.m;if(p.cardio>p.cmax)p.cardio=p.cmax;save();drawRows()}
+  else if(b.dataset.del){const s=slotOf(p.id);if(s>-1){bank(p,now());S.court[s]=null}S.players=S.players.filter(x=>x!==p);save();drawRows()}
+});
+$('addP').onclick=()=>{const p=mk('',null);S.players.push(p);save();drawRows();const inp=$('m-'+p.id);if(inp)inp.focus()};
+$('cfgHalf').oninput=e=>{const v=parseInt(e.target.value);if(v>0){S.cfg.halfMin=v;save()}};
+$('roster').onclick=openRoster;
+const closeSheet=()=>{$('sheetBg').hidden=true;render()};
+$('done').onclick=closeSheet;
+$('sheetBg').addEventListener('click',e=>{if(e.target===$('sheetBg'))closeSheet()});
+
+/* ---------- Hoja del plan ---------- */
+function planBodyHTML(key){
+  const pl=PLANS[key],bl=pl.blocks,active=key===scenarioKey(),cur=active?Math.min(9,Math.floor(matchMs()/BLOCK)):-1;
+  const items=bl.map((b,i)=>{
+    let body;
+    if(i===0)body=`<div class="ln"><span class="rl d">DEF</span><span>${b.D.map(nm).join(', ')}</span></div><div class="ln"><span class="rl a">ATA</span><span>${b.A.map(nm).join(', ')}</span></div>`;
+    else{const pv=bl[i-1],L=(x,y)=>({out:x.filter(k=>!y.includes(k)),inn:y.filter(k=>!x.includes(k))});
+      body=(lineTxt('DEF','d',L(pv.D,b.D))+lineTxt('ATA','a',L(pv.A,b.A)))||'<div class="quiet">Sin cambios</div>'}
+    return `<li class="${i===cur?'cur':''}"><span class="mt">${i===0?'Inicio':'Min '+i*5}${i===5?'<small>2ª parte</small>':''}</span><div>${body}</div></li>`;
+  }).join('');
+  const rows=[...new Set(bl.flatMap(b=>[...b.D,...b.A]))];
+  const role=(k,i)=>bl[i].D.includes(k)?'D':bl[i].A.includes(k)?'A':'';
+  const pm=k=>bl.filter((b,i)=>role(k,i)).length*5;
+  rows.sort((a,b)=>pm(b)-pm(a)||FIELD.indexOf(a)-FIELD.indexOf(b));
+  const tbl=`<div class="tw"><table class="rot"><thead><tr><th>Jugador</th>${bl.map((b,i)=>`<th class="${i===cur?'now':''}">${i*5}</th>`).join('')}<th>Plan</th>${active?'<th>Real</th>':''}</tr></thead><tbody>${
+    rows.map(k=>{const id=idByKey(k),p=id&&P(id);return `<tr><td>${nm(k)}</td>${bl.map((b,i)=>{const r=role(k,i);return `<td class="c ${r} ${i===cur?'now':''}">${r}</td>`}).join('')}<td class="n">${pm(k)}'</td>${active?`<td class="n">${p?Math.floor(pMs(p)/60000)+"'":'–'}</td>`:''}</tr>`}).join('')
+  }</tbody></table></div>`;
+  return `<ol class="tl">${items}</ol>${tbl}`;
+}
+function openPlan(){
+  const act=scenarioKey();
+  $('planSel').innerHTML=Object.keys(PLANS).map(k=>`<option value="${esc(k)}" ${k===act?'selected':''}>${esc(PLANS[k].label)}${k===act?' · hoy':''}</option>`).join('');
+  $('planBody').innerHTML=planBodyHTML($('planSel').value);
+  $('planBg').hidden=false;
+}
+$('planBtn').onclick=openPlan;
+$('planSel').onchange=e=>{
+  const k=e.target.value,abs=PLANS[k].absent;
+  S.players.forEach(p=>{if(!p.key||p.gk)return;const was=p.present;p.present=!abs.includes(p.key);
+    if(was&&!p.present){const s=slotOf(p.id);if(s>-1){goOff(p);S.court[s]=null}}});
+  if(matchMs()===0)autoLineup();
+  save();render();openPlan();
+};
+$('planDone').onclick=()=>{$('planBg').hidden=true};
+$('planBg').addEventListener('click',e=>{if(e.target===$('planBg'))$('planBg').hidden=true});
+
+/* Pantalla encendida mientras corre el reloj */
+let lock=null;
+async function wake(on){try{if(on&&!lock&&navigator.wakeLock){lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',()=>lock=null)}else if(!on&&lock){await lock.release();lock=null}}catch(e){lock=null}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&running())wake(true)});
+
+if(fresh){autoLineup();save()}
+render();
+
+/* Funciona sin conexión: guarda la app en el móvil */
+if('serviceWorker' in navigator&&location.protocol!=='file:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+</body>
+</html>

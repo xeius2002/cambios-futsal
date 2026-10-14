@@ -1,0 +1,86 @@
+CAMBIOS FUTSAL — app para el móvil de Xavi
+==========================================
+
+Esta carpeta es la app completa. No depende de Claude ni de ninguna cuenta:
+una vez instalada en el móvil, funciona SIN INTERNET. Todo (minutos, cambios,
+plantilla) se guarda en el propio móvil.
+
+Solo hace falta publicarla una vez en una web gratuita para poder instalarla.
+
+
+1) PUBLICARLA (una sola vez, lo hace Lucas, ~10 minutos)
+---------------------------------------------------------
+Opción recomendada: GitHub Pages (gratis y permanente)
+
+  1. Crea una cuenta gratis en https://github.com
+  2. Botón "New" (nuevo repositorio). Nombre: cambios-futsal. Marca "Public".
+     Pulsa "Create repository".
+  3. Pulsa "uploading an existing file" y arrastra TODO lo que hay dentro de
+     esta carpeta (todos los archivos). Pulsa "Commit changes".
+  4. Ve a Settings > Pages. En "Source" elige "Deploy from a branch",
+     rama "main" y carpeta "/ (root)". Pulsa Save.
+  5. En 1-2 minutos la app estará en:
+        https://TU-USUARIO.github.io/cambios-futsal/
+
+Alternativa: Netlify Drop (https://app.netlify.com/drop)
+  Crea una cuenta gratis y arrastra esta carpeta. Te da la dirección al momento.
+  (Sin cuenta, la web queda protegida con una contraseña temporal.)
+
+
+2) INSTALARLA EN EL MÓVIL DE XAVI (una sola vez, con internet)
+-------------------------------------------------------------
+iPhone:
+  1. Abre la dirección en Safari (tiene que ser Safari).
+  2. Botón Compartir > "Añadir a pantalla de inicio".
+  3. Abre la app desde el icono nuevo una vez con internet. Ya queda guardada.
+
+Android:
+  1. Abre la dirección en Chrome.
+  2. Menú (tres puntos) > "Instalar aplicación" o "Añadir a pantalla de inicio".
+
+Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
+
+
+3) EN CADA PARTIDO
+------------------
+  - Antes de empezar: "Plantilla" > desmarca a quien no venga
+    (o "Plan" > elige el escenario). La alineación del plan se pone sola.
+  - Pulsa EMPEZAR. Los cambios los hace Xavi: toca al de la pista y luego al
+    del banquillo. Si se equivoca, "Deshacer".
+  - En el descanso pulsa "2ª parte".
+  - Antes del siguiente partido: "Reiniciar".
+
+Consejos:
+  - Batería cargada. La app mantiene la pantalla encendida mientras corre el
+    reloj (iPhone con iOS 18.4 o posterior). Con un iOS más antiguo, pon
+    Ajustes > Pantalla y brillo > Bloqueo automático > Nunca durante el partido.
+  - Para oír el pitido de cardio, el iPhone no puede estar en silencio.
+    (El iPhone no vibra desde apps web; en Android sí.)
+  - Si la app se cierra o se reinicia el móvil, al abrirla el reloj y los
+    minutos siguen bien: se calculan con la hora real.
+
+
+4) QUÉ PASA SI...
+-----------------
+  - ...Lucas cancela Claude o apaga su ordenador: nada. La app vive en el móvil.
+  - ...se borra la web publicada: la app ya instalada sigue funcionando, pero
+    no se podría instalar en otro móvil ni actualizar.
+  - ...Xavi borra los datos de Safari/Chrome o desinstala la app: se pierde lo
+    guardado (partido en curso y cambios en la plantilla). La plantilla vuelve
+    a la de serie.
+  - ...viene un jugador nuevo o una combinación de ausencias sin plan: la app
+    pasa a sugerencias en directo (minutos, cardio y reglas del entrenador).
+    Funciona igual, solo que sin cuadrante fijo.
+  - ...se usa en dos móviles: cada móvil guarda lo suyo; no se sincronizan.
+
+
+5) ACTUALIZARLA MÁS ADELANTE
+---------------------------
+  1. Cambia los archivos que toque.
+  2. En sw.js cambia VERSION (por ejemplo cambios-futsal-1 -> cambios-futsal-2).
+  3. Súbelos otra vez (GitHub: "Add file" > "Upload files", reemplazando).
+  4. Xavi abre la app con internet; la siguiente vez que la abra ya tendrá la
+     versión nueva.
+
+Las rotaciones de los 13 escenarios están calculadas con la plantilla, las
+posiciones y el cardio actuales. Si cambian mucho, hay que recalcularlas.
