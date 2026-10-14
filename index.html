@@ -30,7 +30,7 @@ img{max-width:100%}
   --accent:#ee6418; --accent-ink:#ffffff; --accent-soft:#fde9dc;
   --def:#2f6fc0; --def-soft:#dce8f7; --att:#cf3a2a; --att-soft:#f9e0dc; --gk:#5a6779; --gk-soft:#e5e9ef;
   --court:#2b62ad; --court-out:#1e4a86; --court-line:rgba(255,255,255,.82); --chip:#ffffff; --chip-ink:#132030; --chip-muted:#5a6779;
-  --ok:#22995a; --warn:#e3a00c; --bad:#d23a22; --in:#1d8a4a; --out:#c4361b;
+  --leave:#f6c21b; --ok:#22995a; --warn:#e3a00c; --bad:#d23a22; --in:#1d8a4a; --out:#c4361b;
   --font-display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
   --font-body:"Saira",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -39,13 +39,13 @@ img{max-width:100%}
   --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
   --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
   --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
-  --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}}
+  --leave:#ffd23f; --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0b121a; --surface:#141f2d; --surface-2:#1a2737; --ink:#e8edf4; --muted:#8f9cad; --line:#253447;
   --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
   --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
   --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
-  --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}
+  --leave:#ffd23f; --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -93,6 +93,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .ln .o{color:var(--out)}.ln .i{color:var(--in)}
 .rl{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.06em;padding:1px 7px;border-radius:5px}
 .rl.d{background:var(--def-soft);color:var(--def)}.rl.a{background:var(--att-soft);color:var(--att)}
+.after{display:block;line-height:1.8;font-size:13px;color:var(--muted);padding-top:6px;border-top:1px dashed var(--line)}
+.after .am{margin-right:6px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+.after .o{color:var(--out);font-weight:600}.after .i{color:var(--in);font-weight:600}
+.after .rl{font-size:11px;padding:0 5px;margin-right:2px}
+.ln .mv,.after .mv{color:var(--muted);font-weight:500}
+.mvl{font-size:14px;color:var(--ink)}
+.mvl .mv{margin-left:4px;font-size:12px}
 .warnl{font-size:13px;color:var(--bad);line-height:1.4}
 .planlbl{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
 .planselect{height:42px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:600;padding:0 10px;width:100%}
@@ -150,15 +157,16 @@ table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeri
 .pchip:active{transform:translate(-50%,-50%) scale(.96)}
 .pchip .pl{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:.1em;padding:0 6px;border-radius:4px;line-height:1.5;text-transform:uppercase}
 .pchip .pl.D{background:var(--def);color:#fff}.pchip .pl.A{background:var(--att);color:#fff}.pchip .pl.G{background:#5a6779;color:#fff}
-.pchip.sOut .pl{background:var(--out)!important;color:#fff}
+.pchip.sOut .pl{background:var(--leave)!important;color:#3a2a00}
 .pchip .nm{font-size:clamp(15px,4.4vw,21px);max-width:100%;color:var(--chip-ink)}
 .pchip .st{width:100%;flex-direction:column;gap:1px}
-.pchip .st .track{width:100%;max-width:none;height:5px;background:#dde3ea}
+.pchip .st .track{flex:none;width:100%;max-width:none;height:7px;background:#dde3ea;border-radius:4px}
+.pchip .st .track i{border-radius:4px}
 .pchip .sub{font-size:11px;color:var(--chip-muted)}
 .pchip .st.b .sub{color:#c4361b}
 .pchip .tt{font-family:var(--font-display);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;color:var(--chip-ink);line-height:1}
 .pchip .tt small{font-family:var(--font-body);font-size:9px;color:var(--chip-muted);text-transform:uppercase;letter-spacing:.04em}
-.pchip.sOut{box-shadow:0 0 0 3px var(--out),0 3px 0 rgba(0,0,0,.2)}
+.pchip.sOut{box-shadow:0 0 0 4px var(--leave),0 3px 0 rgba(0,0,0,.2)}
 .pchip.sel{box-shadow:0 0 0 3px var(--accent),0 6px 14px rgba(0,0,0,.3);transform:translate(-50%,-50%) scale(1.04)}
 .pchip.empty{background:transparent;border:2px dashed var(--court-line);box-shadow:none;min-height:56px;justify-content:center}
 .pchip.empty .nm{color:var(--court-line);font-size:14px}
@@ -296,7 +304,10 @@ const FIELD=Object.keys(INFO);
 const ANCH={D:['Ruben','Joan','Roger','Bernat'],A:['Bernat','Ignasi','Pau J.']};
 /* Rotaciones por escenario: 10 bloques de 5' (2 DEF + 2 ATA), minutos igualados, cardio seguido contado también a través del descanso */
 const PLANS={"tots": {"label": "Vienen todos (11)", "absent": [], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau J."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Txesko"]}]}, "Roger": {"label": "Sin Roger", "absent": ["Roger"], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Pau N."], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Bernat", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Bernat", "Pau N."], "A": ["Pau J.", "Félix"]}]}, "Ignasi": {"label": "Sin Ignasi", "absent": ["Ignasi"], "blocks": [{"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}]}, "Ignasi+Roger": {"label": "Sin Roger ni Ignasi", "absent": ["Roger", "Ignasi"], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Pau N."], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Pau N."], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Ruben": {"label": "Sin Ruben", "absent": ["Ruben"], "blocks": [{"D": ["Bernat", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Bernat", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Pau N."], "A": ["Pau J.", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Roger", "Pau N."], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Pau N."]}]}, "Joan": {"label": "Sin Joan", "absent": ["Joan"], "blocks": [{"D": ["Bernat", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Bernat", "Félix"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Roger", "Pau N."], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Txesko"]}]}, "Bernat": {"label": "Sin Bernat", "absent": ["Bernat"], "blocks": [{"D": ["Ruben", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Roger"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Pau J.", "Félix"]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Pau J.": {"label": "Sin Pau J.", "absent": ["Pau J."], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}]}, "Pau N.": {"label": "Sin Pau N.", "absent": ["Pau N."], "blocks": [{"D": ["Roger", "Xufre"], "A": ["Ignasi", "Pau J."]}, {"D": ["Roger", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Joan"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Txesko"]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Xufre"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}]}, "Lucas": {"label": "Sin Lucas", "absent": ["Lucas"], "blocks": [{"D": ["Ruben", "Félix"], "A": ["Ignasi", "Pau J."]}, {"D": ["Ruben", "Joan"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Ruben", "Pau N."], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Roger", "Pau N."], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Joan", "Pau N."], "A": ["Bernat", "Félix"]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Xufre"], "A": ["Pau J.", "Félix"]}]}, "Xufre": {"label": "Sin Xufre", "absent": ["Xufre"], "blocks": [{"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Félix"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Ignasi"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Pau N."]}, {"D": ["Roger", "Félix"], "A": ["Pau J.", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Roger", "Félix"], "A": ["Ignasi", "Pau J."]}, {"D": ["Joan", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Joan", "Félix"], "A": ["Pau J.", "Txesko"]}]}, "Félix": {"label": "Sin Félix", "absent": ["Félix"], "blocks": [{"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Roger"], "A": ["Ignasi", "Pau J."]}, {"D": ["Roger", "Xufre"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau J."]}, {"D": ["Joan", "Xufre"], "A": ["Ignasi", "Txesko"]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Xufre"], "A": ["Pau J.", "Txesko"]}, {"D": ["Roger", "Lucas"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Txesko"]}, {"D": ["Joan", "Lucas"], "A": ["Pau J.", "Pau N."]}]}, "Txesko": {"label": "Sin Txesko", "absent": ["Txesko"], "blocks": [{"D": ["Joan", "Xufre"], "A": ["Pau J.", "Pau N."]}, {"D": ["Joan", "Roger"], "A": ["Bernat", "Félix"]}, {"D": ["Ruben", "Roger"], "A": ["Bernat", "Pau J."]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Roger", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Roger", "Lucas"], "A": ["Pau J.", "Félix"]}, {"D": ["Ruben", "Xufre"], "A": ["Ignasi", "Pau N."]}, {"D": ["Ruben", "Lucas"], "A": ["Ignasi", "Félix"]}, {"D": ["Joan", "Xufre"], "A": ["Bernat", "Pau N."]}, {"D": ["Joan", "Lucas"], "A": ["Bernat", "Pau J."]}]}};
-const BLOCK=5*60000;
+let BLOCK=5*60000;
+const blockMin=()=>BLOCK/60000;
+const minLbl=i=>Math.round(i*BLOCK/60000);
+function setBlock(){BLOCK=Math.max(1,S.cfg.halfMin)*2*60000/10}
 const ROLES=['G','D','D','A','A'],RL={G:'POR',D:'DEF',A:'ATA'};
 const CARDIO=[5,10,15];
 /* Cardio que pasó el entrenador: [ideal, máximo] en minutos seguidos */
@@ -312,6 +323,7 @@ function seed(){return {players:[mk(GK,GK,true),...FIELD.map(n=>mk(n,n))],court:
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.players&&s.court)return s}catch(e){}return null}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S=load();const fresh=!S;if(fresh)S=seed();
+setBlock();
 
 /* ---------- Tiempo ---------- */
 const running=()=>S.clock.since!=null;
@@ -481,15 +493,16 @@ function fixedKey(){
   const abs=FIELD.filter(k=>!S.players.some(p=>p.key===k&&p.present)).sort();
   return Object.keys(PLANS).filter(k=>k!=='auto').find(k=>{const a=PLANS[k].absent.slice().sort();return a.length===abs.length&&a.every((x,i)=>x===abs[i])})||null;
 }
+function planPlayers(ps){return ps.map(p=>{const i=info(p);return {k:p.key||p.id,key:p.key,t:i.t,pD:i.D,pA:i.A,ib:Math.max(1,Math.floor(p.cardio/blockMin()+1e-6)),mb:Math.max(1,Math.floor(p.cmax/blockMin()+1e-6))}})}
 function makeAuto(sig,started){
   const ps=S.players.filter(p=>p.present&&!p.gk);
-  const arr=ps.map(p=>{const i=info(p);return {k:p.key||p.id,key:p.key,t:i.t,pD:i.D,pA:i.A,ib:Math.max(1,Math.floor(p.cardio/5)),mb:Math.max(1,Math.floor(p.cmax/5))}});
+  const arr=planPlayers(ps);
   const opt={},cur=Math.min(9,Math.floor(matchMs()/BLOCK)),prefix=[];
   if(started){
     const idx=id=>ps.findIndex(p=>p.id===id);
     opt.start=cur;
     opt.counts=ps.map(p=>Math.floor(pMs(p)/BLOCK));
-    opt.consec=ps.map(p=>slotOf(p.id)>0?Math.floor(pStint(p)/BLOCK):0);
+    opt.consec=ps.map(p=>slotOf(p.id)>0?Math.ceil(pStint(p)/BLOCK-0.05):0);
     opt.prevD=[S.court[1],S.court[2]].map(idx).filter(i=>i>=0);
     opt.prevA=[S.court[3],S.court[4]].map(idx).filter(i=>i>=0);
     const old=(S.autoPlan&&S.autoPlan.blocks)||(S.lastFixed&&PLANS[S.lastFixed]?PLANS[S.lastFixed].blocks:null);
@@ -503,7 +516,7 @@ function scenarioKey(){
   const sig=presenceSig(),started=matchMs()>0||running();
   if(!started||!S.startSig)S.startSig=sig;
   const fk=fixedKey();
-  if(fk&&S.startSig===sig){S.lastFixed=fk;return fk}
+  if(fk&&S.startSig===sig&&!S.deviated){S.lastFixed=fk;return fk}
   if(!S.autoPlan||S.autoPlan.sig!==sig)makeAuto(sig,started);
   if(S.autoPlan&&S.autoPlan.blocks){PLANS.auto=S.autoPlan;return 'auto'}
   return null;
@@ -518,15 +531,107 @@ function planDiff(key,i){
   r.outs=S.court.slice(1).filter(id=>id&&!want.has(P(id).key||id));
   r.ins=[...b.D,...b.A].map(idByKey).filter(id=>id&&!S.court.includes(id));
   r.empty=!r.D.out.length&&!r.D.inn.length&&!r.A.out.length&&!r.A.inn.length;
+  r.cs=changeSet(cur.D,cur.A,b);
   return r;
+}
+const diffSize=d=>d.D.out.length+d.D.inn.length+d.A.out.length+d.A.inn.length;
+function sameBlock(a,b){const k=x=>x.slice().sort().join();return k(a.D)===k(b.D)&&k(a.A)===k(b.A)}
+function nextAfter(bl,j){
+  let k=j+1;while(k<bl.length&&sameBlock(bl[k],bl[j]))k++;
+  if(k>=bl.length)return null;
+  const L=(x,y)=>({out:x.filter(q=>!y.includes(q)),inn:y.filter(q=>!x.includes(q))});
+  return {at:minLbl(k),cs:changeSet(bl[j].D,bl[j].A,bl[k])};
+}
+const courtKeys=()=>S.court.slice(1).filter(Boolean).map(id=>{const p=P(id);return p.key||p.id});
+const blockKeys=b=>[...b.D,...b.A];
+// ¿La pista se ha movido desde el bloque a hacia el bloque b? (cambio adelantado, total o parcial)
+function headingTo(a,b){
+  const on=new Set(courtKeys()),A=new Set(blockKeys(a)),B=new Set(blockKeys(b));
+  const extra=[...on].filter(k=>!A.has(k)),missing=[...A].filter(k=>!on.has(k));
+  return (extra.length||missing.length)&&extra.every(k=>B.has(k))&&missing.every(k=>!B.has(k));
+}
+// Diferencia de quién está en pista, sin mirar la línea
+function setGap(b){const on=new Set(courtKeys()),W=new Set(blockKeys(b));return [...W].filter(k=>!on.has(k)).length+[...on].filter(k=>!W.has(k)).length}
+// Coloca en su línea a los jugadores del bloque objetivo, sin cambiar quién está en pista
+function normalizeLines(b){
+  const want=id=>{if(!id)return null;const p=P(id),k=p.key||p.id;return b.D.includes(k)?'D':b.A.includes(k)?'A':null};
+  const line=sl=>sl<=2?'D':'A';
+  for(let pass=0;pass<2;pass++)for(let s1=1;s1<5;s1++){
+    const w=want(S.court[s1]);if(!w||w===line(s1))continue;
+    const opts=[1,2,3,4].filter(s2=>line(s2)===w);
+    const s2=opts.find(x=>want(S.court[x])===line(s1))??opts.find(x=>!S.court[x]||want(S.court[x])==null);
+    if(s2!=null){const t=S.court[s1];S.court[s1]=S.court[s2];S.court[s2]=t}
+  }
 }
 function planState(){
   const key=scenarioKey();if(!key)return null;
-  const m=matchMs(),cur=Math.min(9,Math.floor(m/BLOCK)),pre=m===0&&!running();
+  const bl=PLANS[key].blocks,m=matchMs(),cur=Math.min(9,Math.floor(m/BLOCK)),pre=m===0&&!running();
   const d=planDiff(key,cur);
-  if(!d.empty)return {key,due:!pre,pre,d,at:cur*5,left:0};
-  if(cur>=9)return {key,done:true};
-  return {key,due:false,d:planDiff(key,cur+1),at:(cur+1)*5,left:(cur+1)*BLOCK-m};
+  if(!d.empty&&!pre){
+    const j=S.earlyFor;
+    if(j!=null&&j>cur&&j<10&&key===S.earlyKey)return {key,i:j,due:false,early:true,d:planDiff(key,j),at:minLbl(j),left:j*BLOCK-m,after:nextAfter(bl,j)};
+  }
+  if(!d.empty)return {key,i:cur,due:!pre,pre,d,at:minLbl(cur),left:0,after:nextAfter(bl,cur)};
+  let j=cur+1;while(j<10&&planDiff(key,j).empty)j++;
+  if(j>=10)return {key,done:true};
+  return {key,i:j,due:false,d:planDiff(key,j),at:minLbl(j),left:j*BLOCK-m,after:nextAfter(bl,j)};
+}
+/* Si Xavi se sale del plan (o deja pasar un cambio), el plan se ajusta a lo que hay en pista, sin avisos */
+function pendingTarget(){
+  const st=planState();if(!st||st.done)return null;
+  if(st.pre||st.due||st.left<=90000)return {i:st.i,key:st.key,gap:setGap(PLANS[st.key].blocks[st.i])};
+  return {i:null};
+}
+function replanFromCourt(){
+  const sig=presenceSig(),k=scenarioKey();
+  const ps=S.players.filter(p=>p.present&&!p.gk),m=matchMs(),cur=Math.min(9,Math.floor(m/BLOCK));
+  const keyOf=id=>{const p=P(id);return p.key||p.id};
+  const now={D:[S.court[1],S.court[2]].filter(Boolean).map(keyOf),A:[S.court[3],S.court[4]].filter(Boolean).map(keyOf)};
+  const old=k&&PLANS[k]?PLANS[k].blocks:null,prefix=[];
+  for(let b=0;b<cur;b++)prefix.push(old&&old[b]?old[b]:{D:[],A:[]});
+  prefix.push(now);
+  let blocks=prefix;
+  const rem0=(cur+1)*BLOCK-m;
+  // alguien pasaría de su máximo antes del siguiente bloque: solo ese cambio, ahora
+  const tired=[1,2,3,4].map(i=>S.court[i]).filter(id=>id&&pStint(P(id))+rem0>P(id).cmax*60000+30000);
+  if(tired.length){
+    const used=new Set(S.court.filter(Boolean)),line=sl=>sl<=2?'D':'A',nowB={D:now.D.slice(),A:now.A.slice()};
+    for(const id of tired){
+      const sl=slotOf(id),L=line(sl),partner=S.court[sl%2===1?sl+1:sl-1];
+      const cand=ps.filter(p=>!used.has(p.id)&&info(p)[L]<3&&restMs(p)>=90000)
+        .map(p=>({p,sc:(lineOk(L,[partner,p.id])?100:0)-info(p)[L]*2+deficitMin(p)+Math.min(restMs(p)/60000,8)*.25}))
+        .sort((x,y)=>y.sc-x.sc)[0];
+      if(!cand)continue;used.add(cand.p.id);
+      const ko=keyOf(id),ki=cand.p.key||cand.p.id;nowB[L]=nowB[L].map(q=>q===ko?ki:q);
+    }
+    prefix[cur]=nowB;blocks=prefix;
+  }
+  const onNow=new Set([...prefix[cur].D,...prefix[cur].A]);
+  if(cur<9){
+    const rem=rem0,on=id=>{const p=P(id);return onNow.has(p.key||p.id)},idx=id=>ps.findIndex(p=>p.id===id);
+    const opt={start:cur+1,
+      counts:ps.map(p=>Math.round((pMs(p)+(on(p.id)?rem:0))/BLOCK)),
+      consec:ps.map(p=>on(p.id)?Math.max(1,Math.ceil(((slotOf(p.id)>0?pStint(p):0)+rem)/BLOCK-0.05)):0),
+      prevD:prefix[cur].D.map(k=>ps.findIndex(p=>(p.key||p.id)===k)).filter(i=>i>=0),prevA:prefix[cur].A.map(k=>ps.findIndex(p=>(p.key||p.id)===k)).filter(i=>i>=0)};
+    let rest=null;try{rest=buildPlan(planPlayers(ps),opt)}catch(e){rest=null}
+    if(!rest)return;
+    blocks=prefix.concat(rest);
+  }
+  S.autoPlan={sig,label:`Ajustado a tus cambios (${ps.length} jugadores)`,absent:FIELD.filter(q=>!S.players.some(p=>p.key===q&&p.present)),blocks};
+  S.deviated=true;S.earlyFor=null;PLANS.auto=S.autoPlan;
+}
+function afterManualChange(pend){
+  if(!pend)return;
+  const k=scenarioKey();
+  if(pend.i!=null&&PLANS[pend.key]){
+    const b=PLANS[pend.key].blocks[pend.i];
+    if(setGap(b)<pend.gap||(setGap(b)===pend.gap&&pend.gap===0)){   // está haciendo el cambio previsto
+      normalizeLines(b);
+      if(pend.i>Math.min(9,Math.floor(matchMs()/BLOCK))){S.earlyFor=pend.i;S.earlyKey=pend.key}
+      return;
+    }
+  }
+  replanFromCourt();
 }
 
 /* ---------- Cambios manuales ---------- */
@@ -542,7 +647,7 @@ function doTap(t){ // t: {id} o {slot}
   const sa=a.id?slotOf(a.id):a.slot, sb=t.id?slotOf(t.id):t.slot;
   const aOn=sa>-1&&sa!=null, bOn=sb>-1&&sb!=null;
   if(!aOn&&!bOn){sel=t;render();return}               // dos del banquillo: cambia la selección
-  snapshot();
+  snapshot();const pend=pendingTarget();
   if(aOn&&bOn){                                         // mover dentro de la pista
     const x=S.court[sa];S.court[sa]=S.court[sb];S.court[sb]=x;
     return commit('Posiciones cambiadas');
@@ -552,11 +657,12 @@ function doTap(t){ // t: {id} o {slot}
   if(outId){goOff(P(outId))}
   S.court[slot]=benchId;goOn(inP);
   logSub([benchId],outId?[outId]:[]);
+  afterManualChange(pend);
   commit(outId?`Entra ${inP.name} · sale ${P(outId).name}`:`Entra ${inP.name}`);
 }
 function sitDown(){
   if(!sel||!sel.id)return;const s=slotOf(sel.id);if(s<0)return;
-  snapshot();const p=P(sel.id);goOff(p);S.court[s]=null;logSub([],[p.id]);sel=null;commit(`${p.name} al banquillo`);
+  snapshot();const pend=pendingTarget();const p=P(sel.id);goOff(p);S.court[s]=null;logSub([],[p.id]);sel=null;afterManualChange(pend);commit(`${p.name} al banquillo`);
 }
 function toast(msg){$('toastTxt').textContent=msg;$('toast').hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{$('toast').hidden=true;undoSnap=null},6000)}
 $('undo').onclick=()=>{if(!undoSnap)return;S=JSON.parse(undoSnap);undoSnap=null;sel=null;$('toast').hidden=true;
@@ -591,6 +697,29 @@ function benchRow(p){
     <span class="tot" data-k="t"></span></button></li>`;
 }
 const nm=k=>{const p=S.players.find(p=>p.key===k||p.id===k);return esc(p?p.name:k)};
+function changeSet(curD,curA,b){
+  const on=[...curD,...curA],W=[...b.D,...b.A];
+  const lc=k=>curD.includes(k)?'D':'A',ln=k=>b.D.includes(k)?'D':'A';
+  const outs=on.filter(k=>!W.includes(k)),ins=W.filter(k=>!on.includes(k)),pairs=[];
+  for(const o of outs){let ix=ins.findIndex(i=>ln(i)===lc(o));if(ix<0)ix=0;const i=ins.splice(ix,1)[0];pairs.push({out:o,inn:i||null,line:i?ln(i):lc(o)})}
+  for(const i of ins)pairs.push({out:null,inn:i,line:ln(i)});
+  const moves=on.filter(k=>W.includes(k)&&lc(k)!==ln(k)).map(k=>({k,to:ln(k)}));
+  return {pairs,moves};
+}
+function changesHTML(cs,compact){
+  const out=[];
+  for(const L of ['D','A']){
+    const ps=cs.pairs.filter(p=>p.line===L);if(!ps.length)continue;
+    const items=ps.map(p=>`${p.out?`<b class="o">${nm(p.out)}</b>`:'<span class="mv">hueco</span>'} → ${p.inn?`<b class="i">${nm(p.inn)}</b>`:'<span class="mv">nadie</span>'}`).join(', ');
+    out.push(compact?`<span class="rl ${L==='D'?'d':'a'}">${L==='D'?'DEF':'ATA'}</span> ${items}`:`<div class="ln"><span class="rl ${L==='D'?'d':'a'}">${L==='D'?'DEF':'ATA'}</span><span>${items}</span></div>`);
+  }
+  if(cs.moves.length){
+    const t=cs.moves.map(m=>`${nm(m.k)} pasa a ${m.to==='D'?'defensa':'ataque'}`).join(', ');
+    const hint=cs.pairs.length?' (se coloca solo)':' (tócalos para cambiarlos de sitio)';
+    out.push(compact?`<span class="mv">↕ ${t}</span>`:`<div class="ln mvl">↕ ${t}<span class="mv">${hint}</span></div>`);
+  }
+  return out.join(compact?' &nbsp;':'');
+}
 function lineTxt(role,cls,x){
   if(!x.out.length&&!x.inn.length)return '';
   return `<div class="ln"><span class="rl ${cls}">${role}</span>${x.out.length?`<span>sale <b class="o">${x.out.map(nm).join(', ')}</b></span>`:''}${x.inn.length?`<span>entra <b class="i">${x.inn.map(nm).join(', ')}</b></span>`:''}</div>`;
@@ -599,18 +728,21 @@ function cardioWarn(){
   const w=[];
   for(let s=1;s<5;s++){const p=S.court[s]&&P(S.court[s]);if(!p)continue;const ms=pStint(p);
     if(ms>=p.cmax*60000)w.push(`<b>${esc(p.name)}</b> ha llegado a su máximo (${p.cmax}')`);
-    else if(ms>=p.cardio*60000&&!MK.outs.has(p.id))w.push(`<b>${esc(p.name)}</b> pasa de su ideal (${p.cardio}')`)}
+}
   return w.length?`<div class="warnl">⚠ ${w.join(' · ')}</div>`:'';
 }
+function pairsTxt(x){const n=Math.max(x.out.length,x.inn.length),r=[];for(let q=0;q<n;q++)r.push(`${x.out[q]?`<span class="o">${nm(x.out[q])}</span>`:'—'} → ${x.inn[q]?`<span class="i">${nm(x.inn[q])}</span>`:'—'}`);return r.join(', ')}
+function afterTxt(a){const p=[];if(a.D.out.length||a.D.inn.length)p.push(`<span class="rl d">DEF</span> ${pairsTxt(a.D)}`);if(a.A.out.length||a.A.inn.length)p.push(`<span class="rl a">ATA</span> ${pairsTxt(a.A)}`);return p.join(' &nbsp;')}
 function suggHTML(){
   if(PS){
-    const lbl=esc(PLANS[PS.key].label);
-    if(PS.done)return `<h2>Plan · ${lbl}</h2><div class="quiet">Último bloque. No quedan cambios en el plan.</div>${cardioWarn()}`;
+    if(PS.done)return `<div class="quiet">No quedan cambios previstos.</div>${cardioWarn()}`;
     const d=PS.d;
-    if(PS.pre)return `<h2>Plan · ${lbl}</h2><div class="quiet">La alineación no coincide con el inicio del plan:</div><div class="lns">${lineTxt('DEF','d',d.D)}${lineTxt('ATA','a',d.A)}</div>`;
-    const when=PS.due?'<span class="when now">Ahora</span>':`<span class="when">en ${fm(PS.left)}</span>`;
-    const head=!running()&&matchMs()===0?`<h2>Plan · ${lbl}</h2><div class="quiet">Alineación del plan lista. Pulsa Empezar.</div>`:`<h2>Plan · ${lbl}</h2>`;
-    return `${head}<div class="nextc"><span class="minute">${PS.due?'Toca el cambio del minuto':'Próximo cambio · minuto'} ${PS.at}</span>${when}</div><div class="lns">${lineTxt('DEF','d',d.D)}${lineTxt('ATA','a',d.A)}</div>${cardioWarn()}`;
+    if(PS.pre)return `<h2>Alineación del plan</h2><div class="lns">${changesHTML(d.cs)}</div>`;
+    const start=!running()&&matchMs()===0?'<div class="quiet">Alineación lista. Pulsa Empezar.</div>':'';
+    const head=PS.due?`<div class="nextc"><span class="minute">Cambio · min ${PS.at}</span><span class="when now">Ahora</span></div>`
+                     :`<div class="nextc"><span class="minute">Próximo cambio · min ${PS.at}</span><span class="when">en ${fm(PS.left)}</span></div>`;
+    const after=PS.after?`<div class="after"><span class="am">Después · min ${PS.after.at}</span>${changesHTML(PS.after.cs,true)}</div>`:'';
+    return `${start}${head}<div class="lns">${changesHTML(d.cs)}</div>${after}${cardioWarn()}`;
   }
   if(!running()&&matchMs()===0)return `<h2>Antes de empezar</h2><div class="quiet">Revisa la alineación y pulsa Empezar. Para cambiar a alguien, toca un jugador en pista y luego uno del banquillo.</div>`;
   if(!SG.length){
@@ -648,12 +780,12 @@ function render(){
 }
 const sig=()=>[...MK.outs].join()+'>'+[...MK.ins].join()+(PS?(PS.at+'|'+PS.due+'|'+PS.done+'|'+PS.key):'')+(running()?'r':'')+(matchMs()===0?'0':'');
 
-const alerted=new Map();
+const alerted=new Map(),dueBeeped=new Set();
 function tick(){
   const c=clockMs(),r=running(),m=matchMs();
   $('clock').textContent=fmt(c);$('clock').classList.toggle('paused',!r);
   $('go').textContent=r?'Pausa':(c>0||m>0?'Seguir':'Empezar');$('go').classList.toggle('running',r);
-  const tot=S.cfg.halfMin*60000;$('bar').firstElementChild.style.width=Math.min(100,c/tot*100)+'%';$('bar').classList.toggle('over',c>tot);
+  setBlock();const tot=S.cfg.halfMin*60000;$('bar').firstElementChild.style.width=Math.min(100,c/tot*100)+'%';$('bar').classList.toggle('over',c>tot);
   $('meta').textContent=`${S.half}ª parte · de ${fmt(tot)}`;
   let urgent=false;
   document.querySelectorAll('.row[data-id],.pchip[data-id]').forEach(el=>{
@@ -663,13 +795,12 @@ function tick(){
     const st=el.querySelector('[data-st]');
     if(st){
       const ms=pStint(p),ratio=ms/(p.cardio*60000),rmax=ms/(p.cmax*60000);
-      st.querySelector('i').style.width=Math.min(100,rmax*100)+'%';
+      st.querySelector('i').style.width=Math.min(100,ratio*100)+'%';
       st.className='st'+(rmax>=1?' b':ratio>=.85?' w':'');
       const mx=p.cmax>p.cardio?` (máx ${p.cmax}')`:'';
       st.querySelector('[data-k=st]').textContent=chip?(rmax>=1?`${fm(ms)} ¡máx!`:`${fm(ms)} / ${p.cardio}'`):rmax>=1?`${fm(ms)} · ¡máximo ${p.cmax}'!`:ratio>=1?`${fm(ms)} · pasa del ideal ${p.cardio}'${mx}`:`${fm(ms)} de ${p.cardio}'${mx}`;
       if(ratio>=1)urgent=true;
-      const stage=rmax>=1?2:ratio>=1?1:0,prev=alerted.get(p.id)||0;
-      if(r&&stage>prev){alerted.set(p.id,stage);beep(stage)}
+      if(r&&rmax>=1&&(alerted.get(p.id)||0)<2){alerted.set(p.id,2);beep(2)}
     }
     const bs=el.querySelector('[data-k=bs]');
     if(bs){
@@ -679,11 +810,16 @@ function tick(){
       bs.textContent=(rest===Infinity?'sin jugar':'descansa '+fm(rest))+pace+` · aguanta ${p.cardio}'${p.cmax>p.cardio?'–'+p.cmax+"'":''}`;
     }
   });
-  $('sugg').classList.toggle('urgent',PS?!!(PS.due||PS.pre):(urgent||SG.some(g=>g.out.kind==='cardio')));
-  const wn=document.querySelector('#sugg .when:not(.now)');if(wn&&PS&&!PS.due&&!PS.done)wn.textContent='en '+fm(Math.max(0,(PS.at/5)*BLOCK-m));
+  const atMax=S.court.slice(1).some(id=>id&&pStint(P(id))>=P(id).cmax*60000);
+  if(PS&&PS.due&&r&&!dueBeeped.has(PS.at)){dueBeeped.add(PS.at);beep(1)}
+  $('sugg').classList.toggle('urgent',PS?!!(PS.due||atMax):(urgent||SG.some(g=>g.out.kind==='cardio')));
+  const wn=document.querySelector('#sugg .when:not(.now)');if(wn&&PS&&!PS.due&&!PS.done)wn.textContent='en '+fm(Math.max(0,PS.i*BLOCK-m));
 }
 setInterval(tick,250);
-setInterval(()=>{const old=sgSig;computeMarks();if(sig()!==old)render()},1000);
+setInterval(()=>{const old=sgSig;computeMarks();
+  if(PS&&PS.due&&running()&&matchMs()-PS.i*BLOCK>120000){replanFromCourt();save();computeMarks()}
+  else if(running()&&S.court.slice(1).some(id=>id&&pStint(P(id))>P(id).cmax*60000+30000&&!(PS&&(PS.due||PS.left<=60000)&&MK.outs.has(id)))){replanFromCourt();save();computeMarks()}
+  if(sig()!==old)render()},1000);
 
 /* Pitido al pasar el límite (el audio se habilita al pulsar Empezar) */
 let ac=null;
@@ -711,7 +847,7 @@ $('reset').onclick=()=>{
   if(now()-resetArm>3000){resetArm=now();$('reset').textContent='¿Seguro?';setTimeout(()=>{$('reset').textContent='Reiniciar'},3000);return}
   if(running())pause();
   S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null});
-  S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];S.autoPlan=null;S.startSig=null;sel=null;alerted.clear();autoLineup();
+  S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];S.autoPlan=null;S.startSig=null;S.deviated=false;S.earlyFor=null;dueBeeped.clear();sel=null;alerted.clear();autoLineup();
   $('reset').textContent='Reiniciar';save();render();
 };
 
@@ -731,7 +867,7 @@ $('rows').addEventListener('change',e=>{
   if(e.target.type!=='checkbox')return;const p=P(e.target.closest('.prow').dataset.id);
   p.present=e.target.checked;
   const s=slotOf(p.id);if(!p.present&&s>-1){goOff(p);S.court[s]=null}
-  if(matchMs()===0)autoLineup();
+  if(matchMs()===0){S.deviated=false;autoLineup()}
   save();drawRows();
 });
 $('rows').addEventListener('input',e=>{if(e.target.type==='checkbox')return;const p=P(e.target.closest('.prow').dataset.id);p.name=e.target.value.slice(0,16);save()});
@@ -742,7 +878,7 @@ $('rows').addEventListener('click',e=>{
   else if(b.dataset.del){const s=slotOf(p.id);if(s>-1){bank(p,now());S.court[s]=null}S.players=S.players.filter(x=>x!==p);save();drawRows()}
 });
 $('addP').onclick=()=>{const p=mk('',null);S.players.push(p);save();drawRows();const inp=$('m-'+p.id);if(inp)inp.focus()};
-$('cfgHalf').oninput=e=>{const v=parseInt(e.target.value);if(v>0){S.cfg.halfMin=v;save()}};
+$('cfgHalf').oninput=e=>{const v=parseInt(e.target.value);if(v>0&&v<=60){S.cfg.halfMin=v;setBlock();if(matchMs()===0){S.autoPlan=null;S.deviated=false;autoLineup()}save()}};
 $('roster').onclick=openRoster;
 const closeSheet=()=>{$('sheetBg').hidden=true;render()};
 $('done').onclick=closeSheet;
@@ -756,14 +892,14 @@ function planBodyHTML(key){
     if(!b.D.length)body='<div class="quiet">—</div>';
     else if(i===0||!bl[i-1].D.length)body=`<div class="ln"><span class="rl d">DEF</span><span>${b.D.map(nm).join(', ')}</span></div><div class="ln"><span class="rl a">ATA</span><span>${b.A.map(nm).join(', ')}</span></div>`;
     else{const pv=bl[i-1],L=(x,y)=>({out:x.filter(k=>!y.includes(k)),inn:y.filter(k=>!x.includes(k))});
-      body=(lineTxt('DEF','d',L(pv.D,b.D))+lineTxt('ATA','a',L(pv.A,b.A)))||'<div class="quiet">Sin cambios</div>'}
-    return `<li class="${i===cur?'cur':''}"><span class="mt">${i===0?'Inicio':'Min '+i*5}${i===5?'<small>2ª parte</small>':''}</span><div>${body}</div></li>`;
+      body=changesHTML(changeSet(pv.D,pv.A,b))||'<div class="quiet">Sin cambios</div>'}
+    return `<li class="${i===cur?'cur':''}"><span class="mt">${i===0?'Inicio':'Min '+minLbl(i)}${i===5?'<small>2ª parte</small>':''}</span><div>${body}</div></li>`;
   }).join('');
   const rows=[...new Set(bl.flatMap(b=>[...b.D,...b.A]))];
   const role=(k,i)=>bl[i].D.includes(k)?'D':bl[i].A.includes(k)?'A':'';
-  const pm=k=>bl.filter((b,i)=>role(k,i)).length*5;
+  const pm=k=>Math.round(bl.filter((b,i)=>role(k,i)).length*blockMin());
   rows.sort((a,b)=>pm(b)-pm(a)||FIELD.indexOf(a)-FIELD.indexOf(b));
-  const tbl=`<div class="tw"><table class="rot"><thead><tr><th>Jugador</th>${bl.map((b,i)=>`<th class="${i===cur?'now':''}">${i*5}</th>`).join('')}<th>Plan</th>${active?'<th>Real</th>':''}</tr></thead><tbody>${
+  const tbl=`<div class="tw"><table class="rot"><thead><tr><th>Jugador</th>${bl.map((b,i)=>`<th class="${i===cur?'now':''}">${minLbl(i)}</th>`).join('')}<th>Plan</th>${active?'<th>Real</th>':''}</tr></thead><tbody>${
     rows.map(k=>{const id=idByKey(k),p=id&&P(id);return `<tr><td>${nm(k)}</td>${bl.map((b,i)=>{const r=role(k,i);return `<td class="c ${r} ${i===cur?'now':''}">${r}</td>`}).join('')}<td class="n">${pm(k)}'</td>${active?`<td class="n">${p?Math.floor(pMs(p)/60000)+"'":'–'}</td>`:''}</tr>`}).join('')
   }</tbody></table></div>`;
   return `<ol class="tl">${items}</ol>${tbl}`;
