@@ -43,15 +43,32 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
 
 3) EN CADA PARTIDO
 ------------------
-  - Antes de empezar: "Plantilla" > desmarca a quien no venga. La app elige
-    el plan (uno de los 13 escenarios o uno automático calculado en el móvil)
-    y pone la alineación sola. "Plan" sirve para ver los cambios y el resumen.
-  - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
-    partido se recalcula al momento.
+  La app abre en INICIO, con tres opciones:
+
+  NUEVO PARTIDO
+  - Escribe el rival y la fecha y pulsa Continuar.
+  - Se abre la convocatoria: desmarca a quien no venga. La app elige el plan
+    y pone la alineación sola.
   - Pulsa EMPEZAR. Los cambios los hace Xavi: toca al de la pista y luego al
     del banquillo. Si se equivoca, "Deshacer".
+  - GOL, ASISTENCIA O TARJETA: mantén pulsada la ficha del jugador en la
+    pista y elige ⚽ 🅰️ 🟨 🟥.
+  - GOL DEL RIVAL: botón "+ Gol rival". El marcador está junto al reloj.
   - En el descanso pulsa "2ª parte".
-  - Antes del siguiente partido: "Reiniciar".
+  - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
+    partido se recalcula al momento.
+  - Al acabar: "Terminar". Revisa marcador, goles, asistencias y tarjetas
+    y pulsa "Guardar".
+
+  HISTÓRICO
+  - Todos los partidos guardados y los totales de la temporada.
+  - "Exportar a Excel" y "Copia de seguridad". Haz una copia de vez en
+    cuando: el histórico vive en el móvil y se perdería si se borra la app.
+
+  AJUSTES
+  - Jugadores (añadir, quitar, nivel, posición, cardio y si es referente),
+    portero y minutos por parte. Todo desde la app, sin tocar código.
+  - Exportar o importar una copia (para pasar todo a otro móvil).
 
 Consejos:
   - Batería cargada. La app mantiene la pantalla encendida mientras corre el
@@ -69,15 +86,21 @@ Consejos:
   - ...se borra la web publicada: la app ya instalada sigue funcionando, pero
     no se podría instalar en otro móvil ni actualizar.
   - ...Xavi borra los datos de Safari/Chrome o desinstala la app: se pierde lo
-    guardado (partido en curso y cambios en la plantilla). La plantilla vuelve
-    a la de serie.
+    guardado (ajustes e histórico). Por eso conviene exportar una copia de
+    seguridad de vez en cuando (Histórico o Ajustes > Copia de seguridad).
   - ...viene un jugador nuevo o una combinación de ausencias sin plan: la app
     pasa a sugerencias en directo (minutos, cardio y reglas del entrenador).
     Funciona igual, solo que sin cuadrante fijo.
   - ...se usa en dos móviles: cada móvil guarda lo suyo; no se sincronizan.
 
 
-5) ACTUALIZARLA MÁS ADELANTE
+5) CAMBIAR JUGADORES, POSICIONES, CARDIO O REFERENTES
+---------------------------------------------------
+  Desde la app: Inicio > Ajustes. No hace falta tocar código.
+  (La sección CONFIGURACIÓN del código son solo los valores de fábrica.)
+
+
+6) ACTUALIZARLA MÁS ADELANTE
 ---------------------------
   1. Cambia los archivos que toque.
   2. En sw.js cambia VERSION (por ejemplo cambios-futsal-1 -> cambios-futsal-2).
