@@ -70,7 +70,7 @@ Si se cambia algo de la configuración, la app lo detecta sola. Deja de usar los
    - el texto exacto que hay que buscar (copiado tal cual del código, lo bastante largo para que sea único);
    - el texto nuevo que lo sustituye.
 3. Haz el **mínimo cambio posible** y explica en una frase qué hace.
-4. Recuerda siempre al final: **"En `sw.js` cambia `VERSION` al número siguiente"** (por ejemplo, de `cambios-futsal-3` a `cambios-futsal-4`).
+4. Recuerda siempre al final: **"En `sw.js` cambia `VERSION` al número siguiente"** (por ejemplo, de `cambios-futsal-6` a `cambios-futsal-7`).
 5. Si el cambio pedido es grande o afecta a la lógica (planes, avisos, cálculo de minutos), dilo claramente y recomienda que lo haga Lucas.
 6. Si no estás seguro del código actual, **pide que te peguen el trozo** en vez de inventarlo.
 

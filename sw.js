@@ -1,6 +1,6 @@
 /* Guarda la app en el móvil para que funcione sin conexión.
    Si cambias algún archivo, sube también este con VERSION distinta para forzar la actualización. */
-const VERSION = 'cambios-futsal-5';
+const VERSION = 'cambios-futsal-6';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'icon-maskable-512.png',
@@ -8,7 +8,7 @@ const FILES = [
   'saira-condensed-latin-500-normal.woff2', 'saira-condensed-latin-600-normal.woff2', 'saira-condensed-latin-700-normal.woff2'
 ];
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -19,7 +19,7 @@ self.addEventListener('fetch', e => {
   e.respondWith(caches.open(VERSION).then(async cache => {
     const key = req.mode === 'navigate' ? 'index.html' : req;
     const cached = await cache.match(key, { ignoreSearch: true });
-    const fresh = fetch(req).then(res => { if (res && res.ok) cache.put(key, res.clone()); return res; }).catch(() => null);
+    const fresh = fetch(req, { cache: 'no-cache' }).then(res => { if (res && res.ok) cache.put(key, res.clone()); return res; }).catch(() => null);
     if (cached) { e.waitUntil(fresh); return cached; }   // al instante desde el móvil; se actualiza en segundo plano
     return (await fresh) || new Response('Sin conexión', { status: 503 });
   }));
