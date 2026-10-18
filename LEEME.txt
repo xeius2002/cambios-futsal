@@ -54,6 +54,9 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
   - GOL, ASISTENCIA O TARJETA: mantén pulsada la ficha del jugador en la
     pista y elige ⚽ 🅰️ 🟨 🟥.
   - GOL DEL RIVAL: botón "+ Gol rival". El marcador está junto al reloj.
+  - GOL EN PROPIA DEL RIVAL: botón "+PP", a la izquierda del marcador.
+  - PAUSA DE JUGADORES: botón "⏸ Jugadores" bajo el reloj. El partido sigue
+    corriendo pero los tiempos de los jugadores se paran. "▶ Reanudar" para seguir.
   - En el descanso pulsa "2ª parte".
   - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
     partido se recalcula al momento.

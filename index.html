@@ -62,7 +62,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .clockbox{flex:1;min-width:0}
 .clock{font-family:var(--font-display);font-weight:700;font-size:58px;line-height:.9;font-variant-numeric:tabular-nums}
 .clock.paused{color:var(--muted)}
-.meta{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.metarow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+.pjpause{height:26px;padding:0 9px;border-radius:13px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.pjpause:disabled{opacity:.35}
+.pjpause.on{background:var(--warn);border-color:transparent;color:#2a1d00}
+#court.frozen .pchip .tt,#court.frozen .pchip .sub{opacity:.45}
+.meta{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .go{height:64px;min-width:132px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-family:var(--font-display);font-size:24px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-align:center}
 .go.running{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
 .bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden}
@@ -382,7 +387,7 @@ table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeri
     <div class="clockrow">
       <div class="clockbox">
         <div class="clock paused" id="clock">00:00</div>
-        <div class="meta" id="meta">1ª parte · de 25:00</div>
+        <div class="metarow"><div class="meta" id="meta">1ª parte · de 25:00</div><button class="pjpause" id="pjPause" aria-pressed="false" title="Parar solo los tiempos de los jugadores (el partido sigue)">⏸ Jugadores</button></div>
       </div>
       <button class="go" id="go">Empezar</button>
     </div>
@@ -611,9 +616,10 @@ function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m)
 function fm(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 
 function bank(p,t){if(p.since!=null){const d=t-p.since;p.ms+=d;p.stint+=d;p.since=null}}
-function start(){const t=now();S.clock.since=t;S.court.forEach(id=>{const p=id&&P(id);if(p)p.since=t});wake(true)}
+const pjRunning=()=>running()&&!S.pjPaused;
+function start(){const t=now();S.clock.since=t;if(!S.pjPaused)S.court.forEach(id=>{const p=id&&P(id);if(p)p.since=t});wake(true)}
 function pause(){const t=now();S.clock.ms+=t-S.clock.since;S.clock.since=null;S.court.forEach(id=>{const p=id&&P(id);if(p)bank(p,t)});wake(false)}
-function goOn(p){p.stint=0;p.since=running()?now():null;alerted.delete(p.id)}
+function goOn(p){p.stint=0;p.since=pjRunning()?now():null;alerted.delete(p.id)}
 function goOff(p){bank(p,now());p.leftAt=matchMs()}
 
 /* ---------- Motor de sugerencias ---------- */
@@ -917,7 +923,7 @@ function resetMatch(){
   if(running())pause();
   S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null});
   S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];S.autoPlan=null;S.startSig=null;S.deviated=false;S.earlyFor=null;
-  S.cfg.halfMin=EQUIPO.minutosPorParte;S.cfg.halfDef=EQUIPO.minutosPorParte;setBlock();
+  S.cfg.halfMin=EQUIPO.minutosPorParte;S.cfg.halfDef=EQUIPO.minutosPorParte;setBlock();S.pjPaused=false;
   dueBeeped.clear();sel=null;alerted.clear();autoLineup();
 }
 function logSub(ins,outs){if(!ins.length&&!outs.length)return;S.log.unshift({t:clockMs(),half:S.half,ins:ins.map(id=>P(id).name),outs:outs.map(id=>P(id).name)})}
@@ -1076,6 +1082,7 @@ function tick(){
   $('go').textContent=r?'Pausa':(c>0||m>0?'Seguir':'Empezar');$('go').classList.toggle('running',r);
   setBlock();const tot=S.cfg.halfMin*60000;$('bar').firstElementChild.style.width=Math.min(100,c/tot*100)+'%';$('bar').classList.toggle('over',c>tot);
   $('meta').textContent=`${S.half}ª parte · de ${fmt(tot)}`;
+  {const b=$('pjPause'),on=!!S.pjPaused;b.classList.toggle('on',on);b.textContent=on?'▶ Reanudar':'⏸ Jugadores';b.title=on?'Reanudar los tiempos de los jugadores':'Parar solo los tiempos de los jugadores (el partido sigue)';b.setAttribute('aria-pressed',on);b.disabled=!r&&!on;$('court').classList.toggle('frozen',on)}
   let urgent=false;
   document.querySelectorAll('.row[data-id],.pchip[data-id]').forEach(el=>{
     const chip=el.classList.contains('pchip');
@@ -1233,6 +1240,12 @@ $('evMenu').addEventListener('click',e=>{
 });
 $('rivalGoal').onclick=()=>addEvent('golRival',null);
 $('ppGoal').onclick=()=>addEvent('golPP',null);
+/* Pausa de jugadores: el reloj del partido sigue, los tiempos de los jugadores se paran */
+$('pjPause').onclick=()=>{
+  const t=now();
+  if(!S.pjPaused){if(!running())return;S.pjPaused=true;S.court.forEach(id=>{const p=id&&P(id);if(p)bank(p,t)});save();render();toast('Tiempos de jugadores parados · el partido sigue',true)}
+  else{S.pjPaused=false;if(running())S.court.forEach(id=>{const p=id&&P(id);if(p)p.since=t});save();render();toast('Tiempos de jugadores en marcha',true)}
+};
 
 /* ---------- Pantallas ---------- */
 const SCREENS={home:'screenHome',nuevo:'screenNew',match:'screenMatch',hist:'screenHist',ajustes:'screenSet'};
