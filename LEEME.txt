@@ -57,7 +57,8 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
   - GOL EN PROPIA DEL RIVAL: botón "+PP", a la izquierda del marcador.
   - PAUSA DE JUGADORES: botón "⏸ Jugadores" bajo el reloj. El partido sigue
     corriendo pero los tiempos de los jugadores se paran. "▶ Reanudar" para seguir.
-  - En el descanso pulsa "2ª parte".
+  - En el descanso pulsa "2ª parte". El campo se gira solo (como en la pista
+    real). Para girarlo a mano: botón ⇄ en la esquina de la pista.
   - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
     partido se recalcula al momento.
   - Al acabar: "Terminar". Revisa marcador, goles, asistencias y tarjetas
@@ -65,7 +66,11 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
 
   HISTÓRICO
   - Todos los partidos guardados y los totales de la temporada.
-  - "Exportar a Excel" y "Copia de seguridad". Haz una copia de vez en
+  - ANÁLISIS: qué jugadores, parejas de defensa/ataque y cuartetos marcan o
+    encajan más mientras están en pista (+/-), y en qué minutos. Cuantos más
+    partidos, más fiable. Solo cuenta partidos guardados desde esta versión.
+  - "Exportar a Excel" y "Copia de seguridad". "Exportar goles con quién
+    estaba en pista" saca cada gol con los 5 que había en pista. Haz una copia de vez en
     cuando: el histórico vive en el móvil y se perdería si se borra la app.
 
   AJUSTES
