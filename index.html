@@ -1386,7 +1386,42 @@ $('enSave').onclick=()=>{
 };
 
 /* ---------- Histórico ---------- */
-function loadHist(){try{const h=JSON.parse(localStorage.getItem(HIST_KEY));return Array.isArray(h)?h:[]}catch(e){return []}}
+function loadHist(){let h;try{h=JSON.parse(localStorage.getItem(HIST_KEY))}catch(e){}if(!Array.isArray(h))return [];
+  // Partidos guardados antes de la v8: se reconstruye quién estaba en pista a partir de los cambios (una sola vez)
+  let ch=false;for(const m of h)if(!m.tramos&&!m.sinTramos&&Array.isArray(m.registro)){const r=reconstructMatch(m);if(r)Object.assign(m,r);else m.sinTramos=true;ch=true}
+  if(ch)saveHist(h);return h}
+/* Reconstrucción: quinteto inicial = quien aparece antes saliendo que entrando; luego se siguen los cambios.
+   Se valida con los minutos guardados de cada jugador. La línea (defensa/ataque) se estima por posiciones. */
+function reconstructMatch(m){
+  try{
+    const half=(m.minutosPorParte||25)*60,field=m.jugadores.filter(j=>!j.portero),gk=m.jugadores.find(j=>j.portero);
+    const minOf=n=>{const j=field.find(x=>x.nombre===n);return j?j.min:0};
+    const total=gk&&gk.min>0?Math.round(gk.min*60):Math.round(field.reduce((s,j)=>s+j.min,0)*15);
+    const H1=Math.min(half,total),abs=x=>(x.parte===2?H1:0)+x.t;
+    const subs=m.registro.filter(x=>x.tipo==='cambio'),first={};
+    for(const x of subs){for(const n of x.sale||[])if(!first[n])first[n]='sale';for(const n of x.entra||[])if(!first[n])first[n]='entra'}
+    let cur=new Set(field.map(j=>j.nombre).filter(n=>first[n]==='sale'||(!first[n]&&minOf(n)>0)));
+    if(cur.size!==4)return null;
+    const pref=(n,k)=>{const j=EQUIPO.jugadores[n];return j&&j[k]!=null?j[k]:1};
+    const lines=(set,prev)=>{const a=[...set].sort();let best=null;
+      for(let i=0;i<4;i++)for(let k=i+1;k<4;k++){const D=[a[i],a[k]],A=a.filter(n=>!D.includes(n));
+        let c=D.reduce((s,n)=>s+pref(n,'def')*10,0)+A.reduce((s,n)=>s+pref(n,'ata')*10,0);
+        if(prev)c+=D.filter(n=>prev.A.includes(n)).length+A.filter(n=>prev.D.includes(n)).length;
+        if(!best||c<best.c)best={c,D,A}}return {D:best.D,A:best.A}};
+    const cuts=[...new Set([0,H1,total,...subs.map(abs).filter(t=>t>0&&t<total)])].sort((a,b)=>a-b);
+    const tramos=[];let prev=null,si=0;
+    const ord=subs.slice().sort((a,b)=>abs(a)-abs(b));
+    for(let c=0;c<cuts.length-1;c++){const t0=cuts[c],t1=cuts[c+1];
+      while(si<ord.length&&abs(ord[si])<=t0){for(const n of ord[si].sale||[])cur.delete(n);for(const n of ord[si].entra||[])cur.add(n);si++}
+      if(cur.size!==4)return null;prev=lines(cur,prev);
+      tramos.push({desde:t0,hasta:t1,parte:t0<H1?1:2,G:gk?gk.nombre:null,D:prev.D,A:prev.A,pausa:false})}
+    const got={};for(const g of tramos)for(const n of [...g.D,...g.A])got[n]=(got[n]||0)+(g.hasta-g.desde)/60;
+    if(field.some(j=>Math.abs((got[j.nombre]||0)-j.min)>1.5))return null;     // no cuadra: mejor no inventar
+    const registro=m.registro.map(x=>{if(!isGoal(x.tipo))return x;const t=abs(x),g=tramos.find(g=>t>=g.desde&&t<g.hasta)||tramos[tramos.length-1];
+      return {...x,tm:t,pista:{G:g.G,D:g.D,A:g.A}}});
+    return {tramos,registro,reconstruido:true};
+  }catch(e){return null}
+}
 function saveHist(h){try{localStorage.setItem(HIST_KEY,JSON.stringify(h));return true}catch(e){return false}}
 const resOf=m=>m.gf>m.gc?'V':m.gf<m.gc?'D':'E';
 let histTab='partidos',histView=null,delArm=0,seasonSort='min',anSort='pm';
@@ -1440,7 +1475,8 @@ function analysisHTML(H){
     for(let b=0;b<nb;b++){const r=bins[`${parte}|${b}`]||{gf:0,gc:0};
       timeline+=`<div class="tlr"><span class="tlm">${b*5}–${Math.min(half,b*5+5)}'</span><span class="tlbar"><i class="f" style="width:${r.gf/maxB*100}%"></i></span><b class="f">${r.gf||''}</b><span class="tlbar"><i class="c" style="width:${r.gc/maxB*100}%"></i></span><b class="c">${r.gc||''}</b></div>`}
   }
-  return `<p class="note">Con ${M.length} partido${M.length===1?'':'s'} registrado${M.length===1?'':'s'} (${totGF} goles a favor, ${totGC} en contra). ${M.length<4?'Con tan pocos partidos los números aún orientan poco: mejor sacar conclusiones a partir de 4–5.':'Fíjate sobre todo en las combinaciones con bastantes minutos.'} "+/-" es goles a favor menos en contra mientras estaban en pista. "/10'" es ese +/- por cada 10 minutos jugados, para comparar a quien juega mucho con quien juega poco; solo sale a partir de ${P10MIN}' en pista.</p>
+  const nR=M.filter(m=>m.reconstruido).length;
+  return `<p class="note">Con ${M.length} partido${M.length===1?'':'s'} registrado${M.length===1?'':'s'} (${totGF} goles a favor, ${totGC} en contra).${nR?` ${nR===1?'Uno es anterior':nR+' son anteriores'} a esta función y se ha reconstruido con los cambios: quién estaba en pista es exacto, pero quién iba en defensa o en ataque es una estimación.`:''} ${M.length<4?'Con tan pocos partidos los números aún orientan poco: mejor sacar conclusiones a partir de 4–5.':'Fíjate sobre todo en las combinaciones con bastantes minutos.'} "+/-" es goles a favor menos en contra mientras estaban en pista. "/10'" es ese +/- por cada 10 minutos jugados, para comparar a quien juega mucho con quien juega poco; solo sale a partir de ${P10MIN}' en pista.</p>
     <div class="sortbar"><span>Ordenar por</span><div class="chips">${S_.map(([k,l])=>`<button class="chip ${k===anSort?'on':''}" data-asort="${k}">${l}</button>`).join('')}</div></div>
     <div class="card"><div class="sec-h" style="padding:0 0 8px"><h2>Cuándo marcamos y encajamos</h2><span><b class="lg f">■</b> favor <b class="lg c">■</b> contra</span></div><div class="tlwrap">${timeline}</div></div>
     ${tbl('Jugadores',pl,0,'Jugador','minutos en pista')}
