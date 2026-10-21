@@ -74,6 +74,8 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
     cuando: el histórico vive en el móvil y se perdería si se borra la app.
 
   AJUSTES
+  - Colores: granate (el del escudo), verde, marino o noche. "Auto" pone
+    noche si el móvil está en modo oscuro. DEF siempre azul y ATA siempre rojo.
   - Jugadores (añadir, quitar, nivel, posición, cardio y si es referente),
     portero y minutos por parte. Todo desde la app, sin tocar código.
   - Exportar o importar una copia (para pasar todo a otro móvil).

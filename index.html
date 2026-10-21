@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1e4a86">
+<meta name="theme-color" content="#2B1D14">
+<script>try{(function(){var t=localStorage.getItem("cambios-futsal-tema")||"auto";if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"noche":"granate";document.documentElement.setAttribute("data-pal",t)})()}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,39 +14,42 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Cambios Futsal</title>
 <style>
-@font-face{font-family:'Saira';font-style:normal;font-weight:400;font-display:swap;src:url(saira-latin-400-normal.woff2) format('woff2')}
-@font-face{font-family:'Saira';font-style:normal;font-weight:500;font-display:swap;src:url(saira-latin-500-normal.woff2) format('woff2')}
-@font-face{font-family:'Saira';font-style:normal;font-weight:600;font-display:swap;src:url(saira-latin-600-normal.woff2) format('woff2')}
-@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:500;font-display:swap;src:url(saira-condensed-latin-500-normal.woff2) format('woff2')}
-@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(saira-condensed-latin-600-normal.woff2) format('woff2')}
-@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(saira-condensed-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Alfa Slab One';font-style:normal;font-weight:400;font-display:swap;src:url(alfa-slab-one-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-style:normal;font-weight:400;font-display:swap;src:url(libre-franklin-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-style:normal;font-weight:500;font-display:swap;src:url(libre-franklin-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-style:normal;font-weight:600;font-display:swap;src:url(libre-franklin-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-style:normal;font-weight:700;font-display:swap;src:url(libre-franklin-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Libre Franklin';font-style:normal;font-weight:800;font-display:swap;src:url(libre-franklin-latin-800-normal.woff2) format('woff2')}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{-webkit-text-size-adjust:100%}
 body{margin:0}
 img{max-width:100%}
 
-/* Layout: móvil primero. Marcador fijo arriba, tarjeta de sugerencia, lista "En pista" y lista "Banquillo" con filas grandes para tocar */
+/* Colores del club (Ajustes → Colores). DEF siempre azul y ATA siempre rojo, sea cual sea el color del club */
 :root{
-  --bg:#eef1f5; --surface:#ffffff; --surface-2:#f3f5f8; --ink:#132030; --muted:#5a6779; --line:#d6dce5;
-  --accent:#ee6418; --accent-ink:#ffffff; --accent-soft:#fde9dc;
-  --def:#2f6fc0; --def-soft:#dce8f7; --att:#cf3a2a; --att-soft:#f9e0dc; --gk:#5a6779; --gk-soft:#e5e9ef;
-  --court:#2b62ad; --court-out:#1e4a86; --court-line:rgba(255,255,255,.82); --chip:#ffffff; --chip-ink:#132030; --chip-muted:#5a6779;
-  --leave:#f6c21b; --ok:#22995a; --warn:#e3a00c; --bad:#d23a22; --in:#1d8a4a; --out:#c4361b;
-  --font-display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
-  --font-body:"Saira",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --brand:#9B1C1F; --brand-ink:#FFFBF3;
+  --bg:#F3EBDD; --surface:#FFFBF3; --surface-2:#EFE4D2; --ink:#2B1D14; --muted:#6E5A49; --line:#D6C6AC; --edge:#2B1D14;
+  --accent:var(--brand); --accent-ink:var(--brand-ink); --accent-soft:#FBEFD0;
+  --def:#1D3F6E; --def-soft:#DCE6F2; --att:#9B1C1F; --att-soft:#F6DADA; --gk:#5C4636; --gk-soft:#E6D8C2;
+  --board:#2B1D14; --board-2:#3D2B1F; --board-ink:#F3EBDD; --board-muted:#C9B79F; --board-num:#F2C14E; --board-line:#5C4636; --board-red:#F2A58E;
+  --court:#EAD9BC; --court-out:var(--brand); --court-line:rgba(155,28,31,.6); --chip:#FFFBF3; --chip-ink:#2B1D14; --chip-muted:#6E5A49;
+  --leave:#F2C14E; --leave-soft:#FFF6D9; --ok:#2E7D32; --warn:#D97706; --bad:#B3261E; --in:#2E7D32; --out:#B3261E; --in-soft:#E3F0DF; --out-soft:#FBE6E3;
+  --font-display:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-num:"Alfa Slab One",Georgia,serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0b121a; --surface:#141f2d; --surface-2:#1a2737; --ink:#e8edf4; --muted:#8f9cad; --line:#253447;
-  --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
-  --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
-  --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
-  --leave:#ffd23f; --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0b121a; --surface:#141f2d; --surface-2:#1a2737; --ink:#e8edf4; --muted:#8f9cad; --line:#253447;
-  --accent:#ff7a2c; --accent-ink:#1a0d04; --accent-soft:#3a2111;
-  --def:#6ea6ec; --def-soft:#1a3250; --att:#f2735f; --att-soft:#43201a; --gk:#9aa7b7; --gk-soft:#223041;
-  --court:#24538f; --court-out:#163a67; --court-line:rgba(255,255,255,.7); --chip:#f4f7fb; --chip-ink:#132030; --chip-muted:#5a6779;
-  --leave:#ffd23f; --ok:#47c27b; --warn:#f2b632; --bad:#ff6a4f; --in:#4fc47f; --out:#ff7d63; color-scheme:dark}
+html[data-pal="verde"]{--brand:#1F5E3B;--court-line:rgba(31,94,59,.6)}
+html[data-pal="marino"]{--brand:#1D3557;--court-line:rgba(29,53,87,.6)}
+html[data-pal="negro"]{--brand:#2B1D14;--court-out:#2B1D14;--court-line:rgba(43,29,20,.55)}
+html[data-pal="noche"]{
+  --brand:#C0392B; --brand-ink:#FFFBF3;
+  --bg:#17110D; --surface:#241A14; --surface-2:#2E221A; --ink:#F3EBDD; --muted:#B9A58F; --line:#45352A; --edge:#6B5545;
+  --accent-soft:#3A2E12;
+  --def:#8DB4EA; --def-soft:#1E2E45; --att:#F08A8A; --att-soft:#3F1C1C; --gk:#C9B79F; --gk-soft:#33271E;
+  --board:#0E0A07; --board-2:#241A14; --board-line:#4A382B;
+  --court:#3A2B20; --court-out:#7A1F1A; --court-line:rgba(242,193,78,.45);
+  --ok:#5FBF6A; --warn:#F2A93B; --bad:#FF7B6B; --in:#6FCF7A; --out:#FF8A7A; --in-soft:#1C2E1D; --out-soft:#3A1B17;
+  color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -340,6 +344,86 @@ table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeri
 .sheet .foot{display:flex;gap:8px;justify-content:space-between;align-items:center}
 .btn{height:42px;padding:0 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-weight:600;font-size:14px;text-align:center}
 .btn.main{background:var(--accent);color:var(--accent-ink);border-color:transparent;min-width:110px;font-family:var(--font-display);font-size:19px;text-transform:uppercase}
+/* ===== Estilo Club 1994 ===== */
+body{font-weight:500}
+.clock,.score,.when,.minute,.sec-h h2,.hhead h1,.shead h1,.sugg h2,.tot,.pchip .tt,.go,.btn.main,.hbtn b,.kpi b,.mrow .sc,.stp b,.sheet h3,.planlbl,.live b,.evname,.log .lt,.evlist .lt,.tl .mt,.mrow .res,.rot td.c{font-family:var(--font-num);font-weight:400;letter-spacing:.01em}
+.sec-h h2,.hhead h1,.shead h1,.sugg h2,.hbtn b,.sheet h3,.planlbl,.live b,.evname,.minute,.go,.btn.main{text-transform:none}
+.nm{font-weight:800}
+.rl,.role,.pchip .pl,.tag{font-family:var(--font-body);font-weight:800}
+/* Marcador: tablero oscuro */
+.top{background:var(--board);color:var(--board-ink);border-bottom:0;border-radius:0 0 12px 12px;padding:12px 12px 10px}
+.top .clock{color:var(--board-num);font-size:60px}
+.top .clock.paused{color:var(--board-muted)}
+.top .meta{color:var(--board-muted)}
+.top .pjpause{background:transparent;border-color:var(--board-line);color:var(--board-ink)}
+.top .pjpause.on{background:var(--warn);border-color:transparent;color:#2a1d00}
+.go{border-radius:8px;background:var(--board-num);color:#2B1D14;font-size:22px}
+.go.running{background:var(--board-ink);color:#2B1D14;border:0}
+.top .bar{background:var(--board-2)}.top .bar>i{background:var(--board-num)}
+.top .scoreline .vs{color:var(--board-muted)}
+.top .score{background:var(--board-2);border:0;color:var(--board-ink);border-radius:5px;font-size:24px;padding:3px 8px}
+.top .homebtn{padding:0 9px}.top .scoreline{gap:6px}
+.top .ppgoal{border-color:var(--board-line);color:var(--board-muted)}
+.top .rivalgoal{background:transparent;border-color:var(--board-red);color:var(--board-red)}
+.top .homebtn{background:transparent;border-color:var(--board-line);color:var(--board-ink)}
+.top .tool{background:transparent;border-color:var(--board-line);color:var(--board-ink);border-radius:7px;height:38px;font-weight:700}
+.top .tool.danger{color:var(--board-red);border-color:var(--board-red)}
+/* Próximo cambio: como una entrada */
+.sugg{border:2px solid var(--edge);border-radius:8px;box-shadow:4px 4px 0 var(--edge);overflow:hidden;padding:12px 14px}
+.sugg .nextc{margin:-12px -14px 2px;padding:9px 14px;background:var(--leave);color:#2B1D14;border-bottom:2px dashed var(--edge)}
+.sugg .nextc .when{color:#2B1D14}
+.sugg.urgent{background:var(--surface);border-color:var(--edge)}
+.sugg.urgent .nextc{background:var(--brand);color:var(--brand-ink)}
+.sugg.urgent .nextc .when,.sugg.urgent .when.now{color:var(--brand-ink)}
+.sg .who{font-family:var(--font-body);font-weight:800}
+.ln{font-weight:700}
+/* Secciones */
+.sec-h{border-bottom:2px solid var(--edge);padding:0 2px 5px}
+.sec-h h2{font-size:20px}
+/* Pista */
+.court-wrap{background:var(--court-out);border-radius:9px;padding:4px}
+.court{border-radius:6px}
+.pchip{border:2px solid var(--edge);border-radius:7px;box-shadow:none}
+.pchip .pl.D{background:var(--def-soft);color:var(--def)}.pchip .pl.A{background:var(--att-soft);color:var(--att)}.pchip .pl.G{background:var(--board);color:var(--board-ink)}
+html[data-pal="noche"] .pchip .pl.D{background:#DCE6F2;color:#1D3F6E}html[data-pal="noche"] .pchip .pl.A{background:#F6DADA;color:#9B1C1F}
+.pchip.sOut{background:var(--leave-soft);border-color:var(--leave);box-shadow:0 0 0 2px var(--leave)}
+.pchip.sOut .pl{background:var(--leave)!important;color:#2B1D14}
+.pchip .st .track{background:#E6D8C2}
+.pchip .evb{border:1.5px solid #2B1D14}
+.pchip.empty{border-color:var(--court-line)}
+.flipbtn{border:2px solid var(--edge);color:var(--ink)}
+/* Filas */
+.row{border-radius:8px;border:1.5px solid var(--line)}
+.row.sIn{background:var(--in-soft)}.row.sOut{background:var(--out-soft)}
+.role{border-radius:5px}
+.tag{border-radius:3px}
+/* Inicio */
+.hhead{flex-direction:column;text-align:center;gap:8px;padding:22px 2px 6px}
+.hhead .crest{width:118px;height:138px}
+.hhead h1{font-size:34px;line-height:1.05}
+.hbtn{border:2px solid var(--edge);border-radius:8px;box-shadow:3px 3px 0 var(--edge)}
+.hbtn.main{background:var(--brand);color:var(--brand-ink);border-color:var(--edge)}
+.hbtn.main small,.hbtn.main i{color:var(--brand-ink)}
+.live{border:2px solid var(--brand);border-radius:8px}
+/* Controles */
+.card,.mrow,.log,.kpi{border-radius:8px}
+.back,.homebtn{border-radius:6px;border:1.5px solid var(--edge)}
+.tabs{border:2px solid var(--edge);border-radius:8px;padding:0;gap:0;overflow:hidden}
+.tab{border-radius:0;height:42px}.tab+.tab{border-left:2px solid var(--edge)}
+.tab.on{background:var(--brand);color:var(--brand-ink)}
+.chip{border-radius:5px;border:1.5px solid var(--edge)}
+.chip.on{background:var(--ink);color:var(--bg)}
+.btn{border-radius:6px;border:1.5px solid var(--edge)}
+.btn.main{background:var(--brand);color:var(--brand-ink);border-color:var(--edge)}
+.opts,.seg{border-radius:6px;border-color:var(--edge)}
+.opts button.on,.seg button.on{background:var(--brand);color:var(--brand-ink)}
+.toast{border-radius:8px}.toast button{background:var(--leave);color:#2B1D14}
+.sheet{border-radius:12px 12px 0 0}
+.evmenu{border:2px solid var(--edge);border-radius:10px}
+.pal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.pal button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 2px;border-radius:8px;border:1.5px solid var(--line);font-size:11px;font-weight:700;color:var(--muted);text-align:center}
+.pal button i{width:26px;height:26px;border-radius:13px;border:2px solid var(--edge);display:block}
+.pal button.on{border:2px solid var(--edge);color:var(--ink);background:var(--surface-2)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -391,6 +475,14 @@ table.rot{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeri
     <p class="warnbox" id="setWarn" hidden></p>
     <ul class="list" id="setPlayers"></ul>
     <button class="btn wide" id="setAdd">+ Añadir jugador</button></section>
+  <section><div class="sec-h"><h2>Colores</h2></div>
+    <div class="card form"><div class="pal" id="palSel">
+      <button data-pal="auto"><i style="background:linear-gradient(135deg,#9B1C1F 50%,#17110D 50%)"></i>Auto</button>
+      <button data-pal="granate"><i style="background:#9B1C1F"></i>Granate</button>
+      <button data-pal="verde"><i style="background:#1F5E3B"></i>Verde</button>
+      <button data-pal="marino"><i style="background:#1D3557"></i>Marino</button>
+      <button data-pal="noche"><i style="background:#17110D"></i>Noche</button>
+    </div><p class="note">"Auto" usa granate de día y noche si el móvil está en modo oscuro. DEF siempre azul y ATA siempre rojo.</p></div></section>
   <section><div class="sec-h"><h2>Copia de seguridad</h2></div>
     <div class="card form"><p class="note">Guarda los ajustes y el histórico en un archivo, o recupéralos en otro móvil.</p>
       <div class="row2"><button class="btn" id="bkExp">Exportar copia</button><button class="btn" id="bkImp">Importar copia</button></div>
@@ -1653,6 +1745,15 @@ render();
 show(running()?'match':'home');
 
 /* Funciona sin conexión: guarda la app en el móvil */
+/* ---------- Colores del club ---------- */
+const PAL_KEY='cambios-futsal-tema';
+function palPref(){try{return localStorage.getItem(PAL_KEY)||'auto'}catch(e){return 'auto'}}
+function applyPal(){const t=palPref(),r=t==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'noche':'granate'):t;
+  document.documentElement.setAttribute('data-pal',r);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=r==='noche'?'#0E0A07':'#2B1D14';
+  document.querySelectorAll('#palSel button').forEach(b=>b.classList.toggle('on',b.dataset.pal===t))}
+document.querySelectorAll('#palSel button').forEach(b=>b.onclick=()=>{try{localStorage.setItem(PAL_KEY,b.dataset.pal)}catch(e){}applyPal()});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyPal)}catch(e){}
+applyPal();
 if('serviceWorker' in navigator&&location.protocol!=='file:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
 </script>
 </body>

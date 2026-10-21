@@ -39,12 +39,15 @@ Eres un ayudante que modifica una app web pequeña. Lee todo esto antes de respo
 
   El histórico se puede exportar a CSV (Excel) o como copia de seguridad JSON.
 
+### Colores
+- Los colores están en variables CSS al principio del `<style>` (`--brand`, `--bg`, `--def`, `--att`…). Hay paletas por `html[data-pal="…"]` (granate, verde, marino, noche); se eligen en Ajustes → Colores.
+
 ### Archivos
 | Archivo | Qué es | ¿Se toca? |
 |---|---|---|
 | `index.html` | Toda la app: estilos, pantalla y lógica | Normalmente solo la sección CONFIGURACIÓN |
 | `sw.js` | Hace que funcione sin internet | Solo cambiar `VERSION` en cada actualización |
-| `manifest.webmanifest`, iconos `.png`, fuentes `.woff2` | Instalación y aspecto | No |
+| `manifest.webmanifest`, iconos `.png`, fuentes `.woff2` (Alfa Slab One y Libre Franklin) | Instalación y aspecto | No |
 | `LEEME.txt` | Guía de uso | Opcional |
 
 ### La sección CONFIGURACIÓN (al principio del `<script>` de `index.html`)
@@ -74,7 +77,7 @@ Si se cambia algo de la configuración, la app lo detecta sola. Deja de usar los
    - el texto exacto que hay que buscar (copiado tal cual del código, lo bastante largo para que sea único);
    - el texto nuevo que lo sustituye.
 3. Haz el **mínimo cambio posible** y explica en una frase qué hace.
-4. Recuerda siempre al final: **"En `sw.js` cambia `VERSION` al número siguiente"** (por ejemplo, de `cambios-futsal-9` a `cambios-futsal-10`).
+4. Recuerda siempre al final: **"En `sw.js` cambia `VERSION` al número siguiente"** (por ejemplo, de `cambios-futsal-10` a `cambios-futsal-11`).
 5. Si el cambio pedido es grande o afecta a la lógica (planes, avisos, cálculo de minutos), dilo claramente y recomienda que lo haga Lucas.
 6. Si no estás seguro del código actual, **pide que te peguen el trozo** en vez de inventarlo.
 

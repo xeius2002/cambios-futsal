@@ -1,11 +1,11 @@
 /* Guarda la app en el móvil para que funcione sin conexión.
    Si cambias algún archivo, sube también este con VERSION distinta para forzar la actualización. */
-const VERSION = 'cambios-futsal-9';
+const VERSION = 'cambios-futsal-10';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'icon-maskable-512.png',
-  'saira-latin-400-normal.woff2', 'saira-latin-500-normal.woff2', 'saira-latin-600-normal.woff2',
-  'saira-condensed-latin-500-normal.woff2', 'saira-condensed-latin-600-normal.woff2', 'saira-condensed-latin-700-normal.woff2'
+  'alfa-slab-one-latin-400-normal.woff2', 'libre-franklin-latin-400-normal.woff2', 'libre-franklin-latin-500-normal.woff2',
+  'libre-franklin-latin-600-normal.woff2', 'libre-franklin-latin-700-normal.woff2', 'libre-franklin-latin-800-normal.woff2'
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
