@@ -424,6 +424,13 @@ html[data-pal="noche"] .pchip .pl.D{background:#DCE6F2;color:#1D3F6E}html[data-p
 .pal button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 2px;border-radius:8px;border:1.5px solid var(--line);font-size:11px;font-weight:700;color:var(--muted);text-align:center}
 .pal button i{width:26px;height:26px;border-radius:13px;border:2px solid var(--edge);display:block}
 .pal button.on{border:2px solid var(--edge);color:var(--ink);background:var(--surface-2)}
+#sugBtn.off{background:transparent;border-style:dashed;color:var(--board-muted)}
+.row.exp{opacity:.75;border-style:dashed;background:transparent}
+.row.exp .nm{text-decoration:line-through;text-decoration-thickness:2px}
+.role.R{background:var(--out-soft);font-size:15px}
+.unexp{height:36px;padding:0 10px;border-radius:6px;border:1.5px dashed var(--edge);font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;text-align:center}
+.unexp.arm{border-style:solid;background:var(--out);color:#fff;border-color:var(--out)}
+.prow.expl small{color:var(--out);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -497,7 +504,7 @@ html[data-pal="noche"] .pchip .pl.D{background:#DCE6F2;color:#1D3F6E}html[data-p
     <div class="clockrow">
       <div class="clockbox">
         <div class="clock paused" id="clock">00:00</div>
-        <div class="metarow"><div class="meta" id="meta">1ª parte · de 25:00</div><button class="pjpause" id="pjPause" aria-pressed="false" title="Parar solo los tiempos de los jugadores (el partido sigue)">⏸ Jugadores</button></div>
+        <div class="metarow"><div class="meta" id="meta">1ª parte · de 25:00</div><button class="pjpause" id="pjPause" aria-pressed="false" title="Parar solo los tiempos de los jugadores (el partido sigue)">⏸ Jugadores</button><button class="pjpause" id="sugBtn" aria-pressed="true">Sugerencias: sí</button></div>
       </div>
       <button class="go" id="go">Empezar</button>
     </div>
@@ -1032,13 +1039,19 @@ function scoreNow(){return {gf:S.log.filter(x=>x.ev==='gol'||x.ev==='golPP').len
 function addEvent(ev,p){
   snapshot();
   S.log.unshift({t:clockMs(),tm:matchMs(),half:S.half,ev,pid:p?p.id:null,name:p?p.name:null,ins:[],outs:[],on:lineupNow()});
+  // Roja o 2ª amarilla: expulsado. Sale de la pista y la app ya no cuenta con él en el resto del partido
+  if(p&&!p.gk&&!p.expelled&&(ev==='roja'||(ev==='ama'&&evCount(p.id,'ama')>=2))){
+    p.expelled=true;p.expelledBy=ev;p.present=false;const s=slotOf(p.id);if(s>-1){goOff(p);S.court[s]=null}
+    if(sel&&sel.id===p.id)sel=null;
+    commit(ev==='roja'?`🟥 Roja: ${p.name} · expulsado`:`🟨🟨 2ª amarilla: ${p.name} · expulsado`);return;
+  }
   const sc=scoreNow();
   const msg=ev==='golRival'?`Gol del rival · ${sc.gf}–${sc.gc}`:ev==='golPP'?`⚽ Gol en propia del rival · ${sc.gf}–${sc.gc}`:ev==='gol'?`⚽ Gol de ${p.name} · ${sc.gf}–${sc.gc}`:`${EV[ev].i} ${EV[ev].t}: ${p.name}`;
   commit(msg);
 }
 function resetMatch(){
   if(running())pause();
-  S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null});
+  S.players.forEach(p=>{p.ms=0;p.since=null;p.stint=0;p.leftAt=null;if(p.expelled){p.expelled=false;p.present=true}delete p.expelledBy});
   S.clock={ms:0,since:null};S.half=1;S.offset=0;S.log=[];S.autoPlan=null;S.startSig=null;S.deviated=false;S.earlyFor=null;
   S.cfg.halfMin=EQUIPO.minutosPorParte;S.cfg.halfDef=EQUIPO.minutosPorParte;setBlock();S.pjPaused=false;S.flip=false;S.seg=[];
   dueBeeped.clear();sel=null;alerted.clear();autoLineup();
@@ -1179,8 +1192,11 @@ function suggHTML(){
     return `<div class="sg"><span class="who o">↓ ${esc(p.name)}</span><small>${why}</small><span class="who i">↑ ${esc(c.name)}</span><small>${rin}${def}${g.inn.ok?'':' · ojo, la línea queda sin referente'}</small></div>`;
   }).join('');
 }
+const SUG_KEY='cambios-futsal-sugerencias';
+let sugOff=(()=>{try{return localStorage.getItem(SUG_KEY)==='off'}catch(e){return false}})();
 function computeMarks(){
   PS=planState();SG=PS?[]:suggest();
+  if(sugOff){MK={outs:new Set(),ins:new Set()};return}
   if(PS&&PS.d&&(PS.due||PS.pre||PS.left<=60000))MK={outs:new Set(PS.d.outs),ins:new Set(PS.d.ins)};
   else if(PS)MK={outs:new Set(),ins:new Set()};
   else MK={outs:new Set(SG.map(g=>g.out.p.id)),ins:new Set(SG.map(g=>g.inn.c.id))};
@@ -1190,7 +1206,8 @@ function render(){
   $('court').innerHTML=COURT_SVG+[0,1,2,3,4].map(courtRow).join('');
   const lineOf=p=>p.gk?0:info(p).D<=info(p).A?1:2;
   const bench=S.players.filter(p=>p.present&&slotOf(p.id)<0).sort((a,b)=>lineOf(a)-lineOf(b)||FIELD.indexOf(a.key)-FIELD.indexOf(b.key));
-  $('bench').innerHTML=bench.length?bench.map(benchRow).join(''):`<li class="quiet">No queda nadie en el banquillo.</li>`;
+  const expl=S.players.filter(p=>p.expelled);
+  $('bench').innerHTML=(bench.length?bench.map(benchRow).join(''):`<li class="quiet">No queda nadie en el banquillo.</li>`)+expl.map(p=>`<li><div class="row exp"><span class="role R">🟥</span><span class="mid"><span class="nm">${esc(p.name)}</span><span class="sub">Expulsado · no puede volver a jugar</span></span><button class="unexp" data-unexp="${p.id}">Quitar roja</button></div></li>`).join('');
   $('courtInfo').textContent=`${S.court.filter(Boolean).length}/5`;
   const selCourt=sel&&sel.id&&slotOf(sel.id)>-1;
   $('hint').innerHTML=sel?`<div class="hint"><span>${selCourt?`<b>${esc(P(sel.id).name)}</b>: toca quién entra por él`:sel.id?`<b>${esc(P(sel.id).name)}</b>: toca a quién sustituye en pista`:'Toca un suplente para ponerlo aquí'}</span>${selCourt?'<button id="sit">Sentarlo sin cambio</button>':''}<button id="cancel">Cancelar</button></div>`:'';
@@ -1198,7 +1215,8 @@ function render(){
   $('log').innerHTML=L.length?`<ol>${L.slice(0,80).map(x=>`<li><span class="lt">${x.half}ª ${fmt(x.t)}</span><span>${x.ev?`<span class="evl">${EV[x.ev].i} ${!x.pid?EV[x.ev].t:`${EV[x.ev].t} · ${esc(x.name)}`}</span>`:`${x.ins.length?`<span class="in">↑ ${x.ins.map(esc).join(', ')}</span>`:''}${x.ins.length&&x.outs.length?' &nbsp;':''}${x.outs.length?`<span class="out">↓ ${x.outs.map(esc).join(', ')}</span>`:''}`}</span></li>`).join('')}</ol>`:`<div class="none">Aquí aparecerán los cambios, goles y tarjetas con el minuto.</div>`;
   {const sc=scoreNow();$('score').textContent=`${sc.gf} – ${sc.gc}`;$('vsLbl').textContent=S.match&&S.match.rival?`vs ${S.match.rival}`:''}
   $('half').disabled=S.half===2;
-  $('sugg').innerHTML=suggHTML();
+  $('sugg').innerHTML=sugOff?'':suggHTML();$('sugg').hidden=sugOff;
+  {const b=$('sugBtn');b.textContent=sugOff?'Sugerencias: no':'Sugerencias: sí';b.classList.toggle('off',sugOff);b.setAttribute('aria-pressed',!sugOff)}
   tick();
 }
 const sig=()=>[...MK.outs].join()+'>'+[...MK.ins].join()+(PS?(PS.at+'|'+PS.due+'|'+PS.done+'|'+PS.key):'')+(running()?'r':'')+(matchMs()===0?'0':'');
@@ -1235,11 +1253,12 @@ function tick(){
     }
   });
   const atMax=S.court.slice(1).some(id=>id&&pStint(P(id))>=P(id).cmax*60000);
-  if(PS&&PS.due&&r&&!dueBeeped.has(PS.at)){dueBeeped.add(PS.at);beep(1)}
+  if(!sugOff&&PS&&PS.due&&r&&!dueBeeped.has(PS.at)){dueBeeped.add(PS.at);beep(1)}
   $('sugg').classList.toggle('urgent',PS?!!(PS.due||atMax):(urgent||SG.some(g=>g.out.kind==='cardio')));
   const wn=document.querySelector('#sugg .when:not(.now)');if(wn&&PS&&!PS.due&&!PS.done)wn.textContent='en '+fm(Math.max(0,PS.i*BLOCK-m));
 }
 setInterval(tick,250);
+$('sugBtn').onclick=()=>{sugOff=!sugOff;try{localStorage.setItem(SUG_KEY,sugOff?'off':'on')}catch(e){}render();toast(sugOff?'Sugerencias ocultas. Los cambios los decides tú.':'Sugerencias activadas',true)};
 setInterval(()=>{const old=sgSig;computeMarks();
   if(PS&&PS.due&&running()&&matchMs()-PS.i*BLOCK>120000){replanFromCourt();save();computeMarks()}
   else if(running()&&S.court.slice(1).some(id=>id&&pStint(P(id))>P(id).cmax*60000+30000&&!(PS&&(PS.due||PS.left<=60000)&&MK.outs.has(id)))){replanFromCourt();save();computeMarks()}
@@ -1255,7 +1274,19 @@ function beep(stage=1){
 }
 
 /* ---------- Toques ---------- */
+/* Quitar una expulsión puesta por error: dos toques, vuelve al banquillo y se borra la tarjeta que la causó */
+let unexpArm={id:null,t:0};
+function unexpel(id){
+  const p=P(id);if(!p||!p.expelled)return;
+  if(unexpArm.id!==id||now()-unexpArm.t>3000){unexpArm={id,t:now()};const b=document.querySelector(`[data-unexp="${id}"]`);if(b){b.textContent='¿Seguro? Toca otra vez';b.classList.add('arm')}
+    setTimeout(()=>{if(unexpArm.id===id&&now()-unexpArm.t>=2900){const b2=document.querySelector(`[data-unexp="${id}"]`);if(b2){b2.textContent='Quitar roja';b2.classList.remove('arm')}}},3000);return}
+  unexpArm={id:null,t:0};snapshot();
+  const ev=p.expelledBy||'roja',i=S.log.findIndex(x=>x.ev===ev&&x.pid===p.id);if(i>-1)S.log.splice(i,1);
+  p.expelled=false;p.present=true;delete p.expelledBy;
+  commit(`${p.name} vuelve a estar disponible (${ev==='roja'?'roja':'2ª amarilla'} anulada)`);
+}
 document.addEventListener('click',e=>{
+  {const u=e.target.closest('[data-unexp]');if(u)return unexpel(u.dataset.unexp)}
   if(e.target.closest('#sit'))return sitDown();
   if(e.target.closest('#cancel')){sel=null;return render()}
   const row=e.target.closest('.row,.pchip');if(!row||!row.closest('#screenMatch')||!(row.closest('.list')||row.closest('.court')))return;
@@ -1276,14 +1307,15 @@ function drawRows(){
   const order=p=>p.gk?-1:p.key?FIELD.indexOf(p.key):99;
   $('rows').innerHTML=S.players.slice().sort((a,b)=>order(a)-order(b)).map(p=>{
     const i=info(p);
-    return `<div class="prow ${p.present?'':'absent'}" data-id="${p.id}">
-      <input type="checkbox" class="chk" id="c-${p.id}" ${p.present?'checked':''} aria-label="Viene ${esc(p.name)}">
-      <span class="pn"><b class="pname">${esc(p.name)}</b><small>${p.gk?'Portero':`${TIER[i.t]} · ${i.pos}`}</small></span>
+    return `<div class="prow ${p.present?'':'absent'} ${p.expelled?'expl':''}" data-id="${p.id}">
+      <input type="checkbox" class="chk" id="c-${p.id}" ${p.present?'checked':''} ${p.expelled?'disabled':''} aria-label="Viene ${esc(p.name)}">
+      <span class="pn"><b class="pname">${esc(p.name)}</b><small>${p.expelled?'🟥 Expulsado en este partido':p.gk?'Portero':`${TIER[i.t]} · ${i.pos}`}</small></span>
       ${p.gk?'<span class="seg gk">FIJO</span>':`<span class="cardio"><span class="seg"><em>Ideal</em>${CARDIO.map(v=>`<button data-v="${v}" class="${p.cardio===v?'on':''}" aria-label="Ideal ${v} minutos">${v}</button>`).join('')}</span><span class="seg"><em>Máx</em>${CARDIO.map(v=>`<button data-m="${v}" class="${p.cmax===v?'on':''}" aria-label="Máximo ${v} minutos">${v}</button>`).join('')}</span></span>`}
       </div>`}).join('');
 }
 $('rows').addEventListener('change',e=>{
   if(e.target.type!=='checkbox')return;const p=P(e.target.closest('.prow').dataset.id);
+  if(p.expelled){e.target.checked=false;return}
   p.present=e.target.checked;
   const s=slotOf(p.id);if(!p.present&&s>-1){goOff(p);S.court[s]=null}
   if(matchMs()===0){S.deviated=false;autoLineup()}
@@ -1431,7 +1463,7 @@ let endDraft=null,discardArm=0;
 function openEnd(){
   if(running())pause();$('toast').hidden=true;
   const sc=scoreNow();
-  const ps=S.players.filter(p=>p.present||pMs(p)>0);
+  const ps=S.players.filter(p=>p.present||p.expelled||pMs(p)>0);
   const order=p=>p.gk?-1:Math.max(0,FIELD.indexOf(p.key));
   endDraft={rival:S.match?S.match.rival:'',fecha:S.match?S.match.fecha:today(),gf:sc.gf,gc:sc.gc,
     players:ps.sort((a,b)=>order(a)-order(b)).map(p=>({id:p.id,nombre:p.name,portero:!!p.gk,seg:Math.round(pMs(p)/1000),goles:evCount(p.id,'gol'),asis:evCount(p.id,'asis'),ama:evCount(p.id,'ama'),roja:evCount(p.id,'roja')}))};

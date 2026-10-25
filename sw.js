@@ -1,6 +1,6 @@
 /* Guarda la app en el móvil para que funcione sin conexión.
    Si cambias algún archivo, sube también este con VERSION distinta para forzar la actualización. */
-const VERSION = 'cambios-futsal-10';
+const VERSION = 'cambios-futsal-11';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'icon-maskable-512.png',

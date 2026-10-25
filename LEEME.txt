@@ -57,6 +57,12 @@ Prueba: pon el móvil en modo avión y abre la app. Tiene que funcionar igual.
   - GOL EN PROPIA DEL RIVAL: botón "+PP", a la izquierda del marcador.
   - PAUSA DE JUGADORES: botón "⏸ Jugadores" bajo el reloj. El partido sigue
     corriendo pero los tiempos de los jugadores se paran. "▶ Reanudar" para seguir.
+  - SUGERENCIAS: el botón "Sugerencias: sí/no" bajo el reloj oculta el
+    recuadro de cambios y las marcas SALE/ENTRA. Se recuerda para siguientes
+    partidos. El pitido de cardio al llegar al máximo sigue sonando.
+  - ROJA (o 2ª amarilla): el jugador sale de la pista, aparece tachado en el
+    banquillo como expulsado y la app ya no cuenta con él ese partido.
+    Si te equivocas, "Deshacer".
   - En el descanso pulsa "2ª parte". El campo se gira solo (como en la pista
     real). Para girarlo a mano: botón ⇄ en la esquina de la pista.
   - Si alguien se lesiona o se va: desmárcalo en "Plantilla" y el resto del
